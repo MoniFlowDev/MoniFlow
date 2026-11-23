@@ -3,7 +3,7 @@ import type { Project, Recipe } from '../core/types';
 /**
  * Example GregTech CEu-style recipes, so a fresh install has something to look at.
  * Numbers may differ in your Monifactory version — check them in EMI and edit them
- * in the Recipes tab. You are offered the chance to drop these when you import
+ * in Settings > Recipes. You are offered the chance to drop these when you import
  * your game's real recipes.
  */
 export const STARTER_RECIPES: readonly Recipe[] = [

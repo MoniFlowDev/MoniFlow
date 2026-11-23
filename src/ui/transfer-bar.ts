@@ -1,4 +1,4 @@
-/** Export, import and share: the header buttons and the Recipes tab's library buttons. */
+/** Export, import and share: the header buttons and the Settings > Recipes library buttons. */
 import { STARTER_RECIPES } from '../data/starter-recipes';
 import type { Recipe } from '../core/types';
 import { deepClone } from '../state/project';

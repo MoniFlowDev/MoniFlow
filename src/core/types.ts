@@ -1,7 +1,7 @@
 /**
  * The vocabulary the whole app is written in.
  *
- * Two kinds of recipe share one shape: the handful you write yourself in the Recipes tab,
+ * Two kinds of recipe share one shape: the handful you write yourself in Settings > Recipes,
  * and the thousands imported from a Monifactory install (`src: 'game'`). Everything
  * downstream — solver, efficiency ranking, graph — only ever sees `Recipe`.
  */

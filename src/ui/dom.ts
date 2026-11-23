@@ -66,3 +66,12 @@ export function readJsonFile<T = unknown>(
 export function slugify(name: string): string {
   return name.replace(/[^\w-]+/g, '_');
 }
+
+/** Delay calling `fn` until `ms` have passed since the last call — for input that triggers a search. */
+export function debounce<A extends unknown[]>(fn: (...args: A) => void, ms: number): (...args: A) => void {
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  return (...args: A) => {
+    clearTimeout(timer);
+    timer = setTimeout(() => fn(...args), ms);
+  };
+}

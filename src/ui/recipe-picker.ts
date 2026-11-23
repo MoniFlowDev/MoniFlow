@@ -22,7 +22,7 @@ import { itemDot, machineIcon, recipeBadge, recipeTiming } from './badges';
 import { need } from './dom';
 import { ioChips } from './io-chips';
 import { pickerEfficiency } from './picker-efficiency';
-import { recipeSearchText } from './recipe-text';
+import { RecipeSearchIndex } from '../state/recipe-search';
 import { toast } from './toast';
 
 /** Rows rendered at most; the filters are there for narrowing further. */
@@ -37,6 +37,9 @@ const MB_PER_BUCKET = 1000;
 interface PickerSession {
   item: ItemKey;
   efficiency: Efficiency;
+  /** Built once from every producer of the item; the machine/recycling filters run over its
+   * results afterwards rather than forcing a rebuild on every keystroke. */
+  searchIndex: RecipeSearchIndex;
   /** The cost model has been built, so rows can be ranked. */
   ready: boolean;
 }
@@ -59,8 +62,11 @@ export function openPicker(app: App, item: ItemKey): void {
   need<HTMLSelectElement>('#pickSort').innerHTML = sortOptions(app.store.state.pickSort);
   fillRecyclingToggle(producers);
 
+  const searchIndex = new RecipeSearchIndex();
+  searchIndex.rebuild(producers);
+
   // Efficiency is judged against the plan as it stands, including the choices already made.
-  session = { item, efficiency: pickerEfficiency(app.store), ready: false };
+  session = { item, efficiency: pickerEfficiency(app.store), searchIndex, ready: false };
 
   need('#pickList').innerHTML =
     `<p class="hint">Working out the most efficient recipes for ${plural(producers.length, 'recipe')}…</p>`;
@@ -112,20 +118,21 @@ function sortOptions(selected: string | undefined): string {
 
 export function renderPickList(app: App): void {
   if (!session?.ready) return;
-  const { item, efficiency } = session;
+  const { item, efficiency, searchIndex } = session;
   const { store } = app;
 
-  const query = need<HTMLInputElement>('#pickSearch').value.trim().toLowerCase();
+  const query = need<HTMLInputElement>('#pickSearch').value.trim();
   const machine = need<HTMLSelectElement>('#pickMachine').value;
   const showRecycling = need<HTMLInputElement>('#pickRecycle').checked;
   const mode: PickSort = isPickSort(store.state.pickSort) ? store.state.pickSort : 'best';
 
-  const candidates = store.producersOf(item).filter(
-    (recipe) =>
-      (showRecycling || !recipe.recycling) &&
-      (!machine || recipe.machine === machine) &&
-      (!query || recipeSearchText(recipe).includes(query)),
-  );
+  // Final order comes from rankRecipes below; the search index (built once, in openPicker) only
+  // decides which of the item's recipes match the query.
+  const candidates = searchIndex
+    .search(query)
+    .filter(
+      (recipe) => (showRecycling || !recipe.recycling) && (!machine || recipe.machine === machine),
+    );
   const ranked = rankRecipes(candidates, item, efficiency, mode, store.project.defaultTier || 1);
 
   const current = store.currentChoice(item);

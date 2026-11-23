@@ -97,10 +97,14 @@ describe('the tabs', () => {
     expect(view.querySelectorAll('.bar-row').length).toBeGreaterThan(0);
   });
 
-  it('lists your own recipes in the recipes tab', () => {
-    app.setTab('recipes');
+  it('lists your own recipes in the settings recipes page', () => {
+    app.toggleSettings();
+    app.setSettingsPage('recipes');
+    $<HTMLButtonElement>('#recipeSrcSeg [data-src="mine"]').click();
     expect($('#recipeList').querySelectorAll('.recipe-card').length).toBeGreaterThan(0);
-    expect($('#gamePanel').textContent).toContain('Use the real recipes from your game');
+
+    app.setSettingsPage('icons');
+    expect($('#iconPanel').textContent).toContain('Import your game recipes');
   });
 });
 
