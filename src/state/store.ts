@@ -14,6 +14,7 @@ import { solve, type Solution } from '../solver/solve';
 import { ItemCatalog } from './item-catalog';
 import { loadState, saveState } from './persistence';
 import { defaultState } from './project';
+import { RecipeSearchIndex } from './recipe-search';
 
 export type TabName = 'flow' | 'machines' | 'power';
 
@@ -29,6 +30,8 @@ export class Store {
   selection: Selection | null = null;
 
   readonly catalog = new ItemCatalog();
+  private readonly librarySearch = new RecipeSearchIndex();
+  private readonly gameSearch = new RecipeSearchIndex();
 
   private indexCache: RecipeIndex = buildRecipeIndex([]);
   private solutionCache: Solution;
@@ -75,6 +78,11 @@ export class Store {
 
   keyFromText(text: string): ItemKey {
     return this.catalog.keyFromText(text, this.indexCache);
+  }
+
+  /** Recipes from your library or the game set, fuzzy-matched and ranked name-first. */
+  searchRecipes(source: 'mine' | 'game', query: string, limit?: number): Recipe[] {
+    return (source === 'game' ? this.gameSearch : this.librarySearch).search(query, limit);
   }
 
   /* ------------------------------ mutation ------------------------------ */
@@ -151,6 +159,8 @@ export class Store {
       : this.state.library;
     this.indexCache = buildRecipeIndex(all);
     this.catalog.rebuild(this.indexCache);
+    this.librarySearch.rebuild(this.state.library);
+    this.gameSearch.rebuild(this.gameData?.recipes ?? []);
   }
 
   private applyDisplayUnits(): void {

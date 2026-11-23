@@ -12,12 +12,13 @@ import { deepClone, uid } from '../state/project';
 import type { App } from './app';
 import { confirmAction } from './ask';
 import { machineIcon, recipeBadge, recipeTiming } from './badges';
-import { all, need, setActive } from './dom';
+import { all, debounce, need, setActive } from './dom';
 import { ioChips } from './io-chips';
-import { recipeSearchText } from './recipe-text';
 
 /** Cards rendered at most. */
 const LIMIT = 120;
+/** How long to wait after the last keystroke before searching the game's full recipe set. */
+const SEARCH_DEBOUNCE_MS = 150;
 
 export type RecipeSource = 'mine' | 'game';
 
@@ -38,17 +39,9 @@ function renderSourceTabs(app: App): void {
 }
 
 function renderRecipeGrid(app: App): void {
-  const query = need<HTMLInputElement>('#recipeSearch').value.trim().toLowerCase();
-  const pool =
-    app.recipeSource === 'game' ? (app.store.gameData?.recipes ?? []) : app.store.state.library;
-
-  const shown: Recipe[] = [];
-  let matched = 0;
-  for (const recipe of pool) {
-    if (query && !recipeSearchText(recipe).includes(query)) continue;
-    matched++;
-    if (shown.length < LIMIT) shown.push(recipe);
-  }
+  const query = need<HTMLInputElement>('#recipeSearch').value.trim();
+  const matched = app.store.searchRecipes(app.recipeSource, query);
+  const shown = matched.slice(0, LIMIT);
 
   const container = need('#recipeList');
   if (!shown.length) {
@@ -61,8 +54,8 @@ function renderRecipeGrid(app: App): void {
 
   const inPlan = new Set(app.store.solution.steps.map((step) => step.id));
   const overflow =
-    matched > LIMIT
-      ? `<p class="hint" style="margin-top:10px">Showing ${LIMIT} of ${matched.toLocaleString()} — type more to narrow it down.</p>`
+    matched.length > LIMIT
+      ? `<p class="hint" style="margin-top:10px">Showing ${LIMIT} of ${matched.length.toLocaleString()} — type more to narrow it down.</p>`
       : '';
 
   container.innerHTML =
@@ -196,7 +189,8 @@ function makeThis(app: App, recipe: Recipe): void {
 }
 
 export function wireRecipesTab(app: App): void {
-  need<HTMLInputElement>('#recipeSearch').addEventListener('input', () => renderRecipes(app));
+  const search = debounce(() => renderRecipes(app), SEARCH_DEBOUNCE_MS);
+  need<HTMLInputElement>('#recipeSearch').addEventListener('input', search);
 
   need<HTMLButtonElement>('#btnNewRecipe').addEventListener('click', () => {
     app.openRecipeEditor(null);
