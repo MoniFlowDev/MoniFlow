@@ -1,0 +1,226 @@
+{
+  "app": "MoniFlow",
+  "format": 1,
+  "exported": "2026-11-15T12:00:00.000Z",
+  "gtceu": "7.5.3 (test fixture)",
+  "recipes": [
+    {
+      "id": "gtceu:electric_blast_furnace/steel_from_iron_dust",
+      "json": "{\"type\":\"gtceu:electric_blast_furnace\",\"duration\":500,\"inputs\":{\"item\":[{\"content\":{\"type\":\"gtceu:sized\",\"count\":1,\"ingredient\":{\"tag\":\"forge:dusts/iron\"}},\"chance\":10000,\"maxChance\":10000,\"tierChanceBoost\":0}],\"fluid\":[{\"content\":{\"amount\":200,\"value\":[{\"tag\":\"forge:oxygen\"}]},\"chance\":10000,\"maxChance\":10000,\"tierChanceBoost\":0}]},\"outputs\":{\"item\":[{\"content\":{\"type\":\"gtceu:sized\",\"count\":1,\"ingredient\":{\"item\":\"gtceu:steel_ingot\"}},\"chance\":10000,\"maxChance\":10000,\"tierChanceBoost\":0},{\"content\":{\"type\":\"gtceu:sized\",\"count\":1,\"ingredient\":{\"item\":\"gtceu:tiny_ash_dust\"}},\"chance\":1000,\"maxChance\":10000,\"tierChanceBoost\":0}]},\"tickInputs\":{\"eu\":[{\"content\":{\"voltage\":120,\"amperage\":1},\"chance\":10000,\"maxChance\":10000,\"tierChanceBoost\":0}]},\"tickOutputs\":{},\"data\":{\"ebf_temp\":1000},\"recipeConditions\":[]}"
+    },
+    {
+      "id": "gtceu:arc_furnace/arc_iron_to_steel",
+      "json": "{\"type\":\"gtceu:arc_furnace\",\"duration\":200,\"inputs\":{\"item\":[{\"content\":{\"type\":\"gtceu:sized\",\"count\":1,\"ingredient\":{\"tag\":\"forge:ingots/iron\"}},\"chance\":10000,\"maxChance\":10000,\"tierChanceBoost\":0}],\"fluid\":[{\"content\":{\"amount\":56,\"value\":[{\"tag\":\"forge:oxygen\"}]},\"chance\":10000,\"maxChance\":10000,\"tierChanceBoost\":0}]},\"outputs\":{\"item\":[{\"content\":{\"type\":\"gtceu:sized\",\"count\":1,\"ingredient\":{\"item\":\"gtceu:steel_ingot\"}},\"chance\":10000,\"maxChance\":10000,\"tierChanceBoost\":0}]},\"tickInputs\":{\"eu\":[{\"content\":{\"voltage\":30,\"amperage\":1},\"chance\":10000,\"maxChance\":10000,\"tierChanceBoost\":0}]},\"tickOutputs\":{}}"
+    },
+    {
+      "id": "gtceu:macerator/macerate_iron_ingot",
+      "json": "{\"type\":\"gtceu:macerator\",\"duration\":56,\"inputs\":{\"item\":[{\"content\":{\"type\":\"gtceu:sized\",\"count\":1,\"ingredient\":{\"tag\":\"forge:ingots/iron\"}},\"chance\":10000,\"maxChance\":10000,\"tierChanceBoost\":0}]},\"outputs\":{\"item\":[{\"content\":{\"type\":\"gtceu:sized\",\"count\":1,\"ingredient\":{\"item\":\"gtceu:iron_dust\"}},\"chance\":10000,\"maxChance\":10000,\"tierChanceBoost\":0}]},\"tickInputs\":{\"eu\":[{\"content\":2,\"chance\":10000,\"maxChance\":10000,\"tierChanceBoost\":0}]}}"
+    },
+    {
+      "id": "gtceu:electrolyzer/decomposition_electrolyzing_water",
+      "json": "{\"type\":\"gtceu:electrolyzer\",\"duration\":1500,\"inputs\":{\"fluid\":[{\"content\":{\"amount\":1000,\"value\":[{\"fluid\":\"minecraft:water\"}]},\"chance\":10000,\"maxChance\":10000,\"tierChanceBoost\":0}]},\"outputs\":{\"fluid\":[{\"content\":{\"amount\":2000,\"value\":[{\"fluid\":\"gtceu:hydrogen\"}]},\"chance\":10000,\"maxChance\":10000,\"tierChanceBoost\":0},{\"content\":{\"amount\":1000,\"value\":[{\"fluid\":\"gtceu:oxygen\"}]},\"chance\":10000,\"maxChance\":10000,\"tierChanceBoost\":0}]},\"tickInputs\":{\"eu\":[{\"content\":{\"voltage\":30,\"amperage\":1},\"chance\":10000,\"maxChance\":10000,\"tierChanceBoost\":0}]}}"
+    },
+    {
+      "id": "gtceu:bender/bend_steel_ingot_to_plate",
+      "json": "{\"type\":\"gtceu:bender\",\"duration\":112,\"inputs\":{\"item\":[{\"content\":{\"type\":\"gtceu:sized\",\"count\":1,\"ingredient\":{\"tag\":\"forge:ingots/steel\"}},\"chance\":10000,\"maxChance\":10000,\"tierChanceBoost\":0},{\"content\":{\"type\":\"gtceu:circuit\",\"configuration\":1},\"chance\":0,\"maxChance\":10000,\"tierChanceBoost\":0}]},\"outputs\":{\"item\":[{\"content\":{\"type\":\"gtceu:sized\",\"count\":1,\"ingredient\":{\"item\":\"gtceu:steel_plate\"}},\"chance\":10000,\"maxChance\":10000,\"tierChanceBoost\":0}]},\"tickInputs\":{\"eu\":[{\"content\":{\"voltage\":24,\"amperage\":1},\"chance\":10000,\"maxChance\":10000,\"tierChanceBoost\":0}]}}"
+    },
+    {
+      "id": "gtceu:wiremill/mill_copper_wire",
+      "json": "{\"type\":\"gtceu:wiremill\",\"duration\":100,\"inputs\":{\"item\":[{\"content\":{\"type\":\"gtceu:sized\",\"count\":1,\"ingredient\":{\"tag\":\"forge:ingots/copper\"}},\"chance\":10000,\"maxChance\":10000,\"tierChanceBoost\":0}]},\"outputs\":{\"item\":[{\"content\":{\"type\":\"gtceu:sized\",\"count\":2,\"ingredient\":{\"item\":\"gtceu:copper_single_wire\"}},\"chance\":10000,\"maxChance\":10000,\"tierChanceBoost\":0}]},\"tickInputs\":{\"eu\":[{\"content\":{\"voltage\":7,\"amperage\":1},\"chance\":10000,\"maxChance\":10000,\"tierChanceBoost\":0}]}}"
+    },
+    {
+      "id": "gtceu:circuit_assembler/cleanroom_example",
+      "json": "{\"type\":\"gtceu:circuit_assembler\",\"duration\":200,\"inputs\":{\"item\":[{\"content\":{\"type\":\"gtceu:sized\",\"count\":1,\"ingredient\":{\"item\":\"gtceu:steel_plate\"}},\"chance\":10000,\"maxChance\":10000,\"tierChanceBoost\":0},{\"content\":{\"type\":\"gtceu:sized\",\"count\":4,\"ingredient\":{\"item\":\"gtceu:copper_single_wire\"}},\"chance\":10000,\"maxChance\":10000,\"tierChanceBoost\":0}],\"fluid\":[{\"content\":{\"amount\":144,\"value\":[{\"tag\":\"forge:soldering_alloy\"}]},\"chance\":10000,\"maxChance\":10000,\"tierChanceBoost\":0}]},\"outputs\":{\"item\":[{\"content\":{\"type\":\"gtceu:sized\",\"count\":2,\"ingredient\":{\"item\":\"gtceu:test_circuit\"}},\"chance\":10000,\"maxChance\":10000,\"tierChanceBoost\":0}]},\"tickInputs\":{\"eu\":[{\"content\":{\"voltage\":480,\"amperage\":1},\"chance\":10000,\"maxChance\":10000,\"tierChanceBoost\":0}]},\"recipeConditions\":[{\"type\":\"cleanroom\",\"cleanroom\":\"cleanroom\"}]}"
+    },
+    {
+      "id": "gtceu:steam_turbine/steam",
+      "json": "{\"type\":\"gtceu:steam_turbine_fuel\",\"duration\":10,\"inputs\":{\"fluid\":[{\"content\":{\"amount\":640,\"value\":[{\"tag\":\"forge:steam\"}]},\"chance\":10000,\"maxChance\":10000,\"tierChanceBoost\":0}]},\"outputs\":{},\"tickOutputs\":{\"eu\":[{\"content\":{\"voltage\":32,\"amperage\":1},\"chance\":10000,\"maxChance\":10000,\"tierChanceBoost\":0}]}}"
+    },
+    {
+      "id": "gtceu:mixer/manual_fallback_example",
+      "type": "gtceu:mixer",
+      "gt": {
+        "duration": 100,
+        "eut": 30,
+        "in": [
+          {
+            "id": "gtceu:iron_dust",
+            "n": 1
+          },
+          {
+            "id": "gtceu:oxygen",
+            "n": 100,
+            "f": true
+          }
+        ],
+        "out": [
+          {
+            "id": "gtceu:test_mix",
+            "n": 2
+          },
+          {
+            "id": "gtceu:tiny_ash_dust",
+            "n": 1,
+            "c": 0.25
+          }
+        ],
+        "temp": 0
+      }
+    },
+    {
+      "id": "minecraft:iron_block",
+      "type": "minecraft:crafting",
+      "generic": {
+        "duration": 0,
+        "eut": 0,
+        "in": [
+          {
+            "id": "minecraft:iron_ingot",
+            "n": 9
+          }
+        ],
+        "out": [
+          {
+            "id": "minecraft:iron_block",
+            "n": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "minecraft:iron_ingot_from_smelting",
+      "type": "minecraft:smelting",
+      "generic": {
+        "duration": 200,
+        "eut": 0,
+        "in": [
+          {
+            "id": "minecraft:raw_iron",
+            "n": 1
+          }
+        ],
+        "out": [
+          {
+            "id": "minecraft:iron_ingot",
+            "n": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "create:mixing/example",
+      "type": "create:mixing",
+      "generic": {
+        "duration": 100,
+        "eut": 0,
+        "in": [
+          {
+            "id": "minecraft:copper_ingot",
+            "n": 1
+          }
+        ],
+        "out": [
+          {
+            "id": "gtceu:copper_single_wire",
+            "n": 1,
+            "c": 0.5
+          }
+        ]
+      }
+    },
+    {
+      "id": "gtceu:shaped/mortar_steel_dust",
+      "type": "minecraft:crafting_shaped",
+      "generic": {
+        "duration": 0,
+        "eut": 0,
+        "in": [
+          {
+            "id": "gtceu:steel_ingot",
+            "n": 1
+          },
+          {
+            "id": "gtceu:iron_mortar",
+            "n": 1
+          }
+        ],
+        "out": [
+          {
+            "id": "gtceu:steel_dust",
+            "n": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "minecraft:clay_from_bucket",
+      "type": "minecraft:crafting_shapeless",
+      "generic": {
+        "duration": 0,
+        "eut": 0,
+        "in": [
+          {
+            "id": "minecraft:water_bucket",
+            "n": 1
+          },
+          {
+            "id": "minecraft:sand",
+            "n": 1
+          }
+        ],
+        "out": [
+          {
+            "id": "minecraft:clay",
+            "n": 1
+          }
+        ]
+      }
+    },
+    "not valid json {"
+  ],
+  "items": {
+    "gtceu:steel_ingot": "Steel Ingot",
+    "gtceu:iron_dust": "Iron Dust",
+    "minecraft:iron_ingot": "Iron Ingot",
+    "minecraft:copper_ingot": "Copper Ingot",
+    "gtceu:steel_plate": "Steel Plate",
+    "gtceu:tiny_ash_dust": "Tiny Pile of Ashes",
+    "gtceu:copper_single_wire": "1x Copper Wire",
+    "gtceu:test_circuit": "Test Circuit",
+    "minecraft:iron_block": "Block of Iron",
+    "minecraft:raw_iron": "Raw Iron",
+    "gtceu:test_mix": "Test Mix",
+    "gtceu:iron_mortar": "Iron Mortar",
+    "gtceu:steel_dust": "Steel Dust",
+    "minecraft:water_bucket": "Water Bucket",
+    "minecraft:bucket": "Bucket",
+    "minecraft:sand": "Sand",
+    "minecraft:clay": "Clay"
+  },
+  "fluids": {
+    "minecraft:water": "Water",
+    "gtceu:hydrogen": "Hydrogen",
+    "gtceu:oxygen": "Oxygen",
+    "gtceu:soldering_alloy": "Soldering Alloy",
+    "gtceu:steam": "Steam"
+  },
+  "tags": {
+    "forge:dusts/iron": "gtceu:iron_dust|someothermod:iron_dust",
+    "forge:ingots/iron": [
+      "minecraft:iron_ingot"
+    ],
+    "forge:ingots/copper": [
+      "minecraft:copper_ingot"
+    ],
+    "forge:ingots/steel": [
+      "gtceu:steel_ingot"
+    ]
+  },
+  "errors": {
+    "1": "example:recipe [recipe]: sample warning"
+  },
+  "itemInfo": {
+    "gtceu:iron_mortar": "d:256",
+    "minecraft:water_bucket": "r:minecraft:bucket"
+  }
+}

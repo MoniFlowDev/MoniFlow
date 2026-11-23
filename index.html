@@ -1,0 +1,252 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MoniFlow</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%2316202b'/%3E%3Cpath d='M6 22 L13 10 L19 18 L26 8' stroke='%23ffb347' stroke-width='3.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <svg viewBox="0 0 32 32" class="logo" aria-hidden="true"><rect width="32" height="32" rx="7" fill="#1d2a38"/><path d="M6 22 L13 10 L19 18 L26 8" stroke="#ffb347" stroke-width="3.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <div>
+        <div class="brand-name">MoniFlow</div>
+        <div class="brand-sub">Monifactory recipe flow &amp; power planner</div>
+      </div>
+    </div>
+    <div class="project-bar">
+      <select id="projectSelect" title="Saved plans"></select>
+      <button class="btn ghost" id="btnNewProject" title="New plan">＋ New</button>
+      <button class="btn ghost" id="btnRenameProject" title="Rename plan">Rename</button>
+      <button class="btn ghost" id="btnDupProject" title="Duplicate plan">Duplicate</button>
+      <button class="btn ghost danger" id="btnDeleteProject" title="Delete plan">Delete</button>
+    </div>
+    <div class="top-actions">
+      <div class="seg" id="unitSeg" title="Rate unit">
+        <button data-unit="s">/s</button><button data-unit="min">/min</button><button data-unit="h">/h</button>
+      </div>
+      <button class="btn ghost" id="btnShare" title="Copy a link containing this plan">Share link</button>
+      <button class="btn ghost" id="btnExport" title="Download everything as JSON">Export</button>
+      <label class="btn ghost" title="Import a MoniFlow JSON file">Import<input type="file" id="fileImport" accept=".json,application/json" hidden></label>
+    </div>
+  </header>
+
+  <div class="layout">
+    <aside class="sidebar">
+      <section class="panel">
+        <div class="panel-head"><h2>Targets</h2><span class="hint">What you want to make</span></div>
+        <div id="targetList"></div>
+        <div><input id="targetSearch" type="search" autocomplete="off" placeholder="＋ Find an item to make…"></div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-head"><h2>Defaults</h2></div>
+        <div class="field-grid">
+          <label>Machine tier<select id="defaultTier"></select></label>
+          <label>EBF coils<select id="defaultCoil"></select></label>
+          <label>Power grid tier<select id="gridTier"></select></label>
+          <label title="How fluid amounts are shown (applies to all plans)">Fluid units<select id="fluidUnits">
+            <option value="auto">Auto (mB, B, kB)</option>
+            <option value="mb">Always mB</option>
+          </select></label>
+          <label class="check"><input type="checkbox" id="autoExpand"> Auto-expand ingredients</label>
+          <label class="check" title="Perfect overclocking (e.g. Large Chemical Reactor) keeps energy per item the same at higher tiers, so a higher tier just needs fewer machines. Picks the tier with the fewest machines, up to your power grid tier, unless you set a tier on the step yourself."><input type="checkbox" id="autoPerfectTier"> Best tier for perfect overclocking</label>
+        </div>
+        <p class="hint">New nodes use the default tier (or the recipe's minimum tier if higher). Click a node to override it.</p>
+      </section>
+
+      <section class="panel">
+        <div class="panel-head"><h2>Raw inputs</h2><span class="hint">Supply these</span></div>
+        <form class="raw-add" id="rawAddForm" autocomplete="off">
+          <div class="grow"><input id="rawAddInput" autocomplete="off" placeholder="Supply an item, hide its chain…"></div>
+          <button class="btn small" type="submit">Add</button>
+        </form>
+        <div id="rawList" class="io-list"></div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-head"><h2>Byproducts</h2><span class="hint">Left over</span></div>
+        <div id="surplusList" class="io-list"></div>
+      </section>
+
+      <section class="panel" id="warnPanel" hidden>
+        <div class="panel-head"><h2>Warnings</h2></div>
+        <ul id="warnList" class="warn-list"></ul>
+      </section>
+    </aside>
+
+    <main class="main">
+      <div class="summary" id="summary"></div>
+
+      <nav class="tabs" id="tabs">
+        <button data-tab="flow" class="active">Flow graph</button>
+        <button data-tab="machines">Machines</button>
+        <button data-tab="power">Power</button>
+        <button data-tab="recipes">Recipes</button>
+      </nav>
+
+      <section class="tab-panel active" id="tab-flow">
+        <div class="graph-wrap">
+          <svg id="graph" xmlns="http://www.w3.org/2000/svg"></svg>
+          <div class="graph-tip" id="graphTip" hidden></div>
+          <div class="graph-tools">
+            <div class="seg small" id="dirSeg" title="Flow direction">
+              <button data-dir="lr" title="Left to right">→</button><button data-dir="tb" title="Top to bottom">↓</button><button data-dir="bt" title="Bottom to top">↑</button>
+            </div>
+            <button class="btn small" id="btnResetLayout" title="Forget nodes you moved and use the automatic layout">Reset layout</button>
+            <button class="btn small" id="btnFit" title="Fit to view">Fit</button>
+            <button class="btn small" id="btnZoomIn" title="Zoom in">＋</button>
+            <button class="btn small" id="btnZoomOut" title="Zoom out">−</button>
+            <label class="check small" title="Show every line's rate (otherwise they appear when you hover or select a node)"><input type="checkbox" id="showLabels"> All rates</label>
+            <label class="check small" title="Show raw inputs and unused byproducts as marked icons on each step (dashed = raw input, purple = byproduct) instead of separate nodes with long lines"><input type="checkbox" id="graphStubs"> Compact</label>
+            <button class="btn small" id="btnSvg" title="Download the graph as SVG">SVG</button>
+          </div>
+          <div class="graph-legend">
+            <span><i class="lg item"></i>Line colour = item, thickness = rate</span>
+            <span><i class="lg raw"></i>Raw input</span>
+            <span><i class="lg out"></i>Target</span>
+            <span><i class="lg sur"></i>Byproduct</span>
+          </div>
+          <div class="empty" id="graphEmpty" hidden>
+            <h3>Nothing to show yet</h3>
+            <p>Use <b>Find an item to make</b> on the left and pick a recipe. Then click <b>+</b> on any input to keep building the tree. Import your game recipes in the Recipes tab to search everything.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="tab-panel" id="tab-machines">
+        <div id="machinesView"></div>
+      </section>
+
+      <section class="tab-panel" id="tab-power">
+        <div id="powerView"></div>
+      </section>
+
+      <section class="tab-panel" id="tab-recipes">
+        <div id="gamePanel"></div>
+        <div class="recipes-toolbar">
+          <div class="seg" id="recipeSrcSeg"><button data-src="mine">My recipes</button><button data-src="game">Game recipes</button></div>
+          <input type="search" id="recipeSearch" placeholder="Search recipes, machines, items…">
+          <button class="btn primary" id="btnNewRecipe">＋ New recipe</button>
+          <button class="btn ghost" id="btnExportLib">Export library</button>
+          <label class="btn ghost">Import library<input type="file" id="fileImportLib" accept=".json,application/json" hidden></label>
+          <button class="btn ghost danger" id="btnResetLib" title="Add back any missing starter recipes">Restore starters</button>
+        </div>
+        <p class="hint lib-note">Game recipes come from your own install and are read-only; use "Copy &amp; edit" to change one. My recipes are yours to edit (durations in ticks, 20 ticks = 1 s).</p>
+        <div id="recipeList"></div>
+      </section>
+    </main>
+
+    <aside class="drawer" id="drawer" hidden>
+      <button class="drawer-close" id="drawerClose" aria-label="Close">×</button>
+      <div id="drawerBody"></div>
+    </aside>
+  </div>
+
+  <dialog id="recipeDialog">
+    <form method="dialog" id="recipeForm" class="recipe-form">
+      <h2 id="recipeDialogTitle">Recipe</h2>
+      <div class="field-grid two">
+        <label>Name<input name="name" required placeholder="e.g. Polyethylene"></label>
+        <label>Machine<input name="machine" list="machineList" required placeholder="e.g. Chemical Reactor"></label>
+        <label>Duration
+          <span class="inline">
+            <input name="duration" type="number" min="0.05" step="any" required>
+            <select name="durUnit"><option value="t">ticks</option><option value="s">seconds</option></select>
+          </span>
+        </label>
+        <label>Base EU/t<input name="eut" type="number" min="0" step="any" required></label>
+        <label id="tempField">Required heat (K)<input name="temp" type="number" min="0" step="1" placeholder="EBF only"></label>
+        <label>Minimum tier<output name="minTier" class="tier-out"></output></label>
+      </div>
+      <div class="io-editor">
+        <div>
+          <div class="io-head"><h3>Inputs</h3><button type="button" class="btn small" data-add="inputs">＋ Item</button><button type="button" class="btn small" data-add="inputs" data-fluid="1">＋ Fluid</button></div>
+          <div class="io-rows" id="ioInputs"></div>
+        </div>
+        <div>
+          <div class="io-head"><h3>Outputs</h3><button type="button" class="btn small" data-add="outputs">＋ Item</button><button type="button" class="btn small" data-add="outputs" data-fluid="1">＋ Fluid</button></div>
+          <div class="io-rows" id="ioOutputs"></div>
+        </div>
+      </div>
+      <p class="hint">Fluids are in mB (1000 mB = 1 bucket). Output chance is in percent; the first output is the recipe's main product.</p>
+      <div class="dialog-actions">
+        <button type="button" class="btn ghost" value="cancel" id="recipeCancel">Cancel</button>
+        <button type="submit" class="btn primary" value="save">Save recipe</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog id="pickDialog" class="pick-dialog">
+    <div class="pick-head">
+      <div>
+        <h2 id="pickTitle"></h2>
+        <p class="hint" id="pickSub"></p>
+      </div>
+      <button class="drawer-close" id="pickClose" aria-label="Close">×</button>
+    </div>
+    <div class="pick-tools">
+      <input type="search" id="pickSearch" placeholder="Filter by machine or ingredient…" autocomplete="off">
+      <select id="pickSort" title="How to sort the recipes"></select>
+      <select id="pickByproducts" title="How recipes with byproducts are costed">
+        <option value="split">Byproducts share the cost</option>
+        <option value="plan">Only byproducts this plan uses share it</option>
+        <option value="none">Ignore byproducts</option>
+      </select>
+      <select id="pickMachine"></select>
+      <label class="check small" id="pickRecycleWrap"><input type="checkbox" id="pickRecycle"> <span id="pickRecycleLabel">Show recycling</span></label>
+      <button class="btn small" id="pickRaw" title="Do not craft it in this plan">Supply as raw instead</button>
+    </div>
+    <div class="pick-list" id="pickList"></div>
+  </dialog>
+
+  <dialog id="iconDialog" class="ask-dialog icon-dialog">
+    <form method="dialog" class="recipe-form" id="iconForm">
+      <h2>Build item &amp; machine icons</h2>
+      <p class="ask-message">MoniFlow draws the icons from your instance's own textures and models. Nothing leaves your computer; the result is saved in this browser.</p>
+      <ol class="steps">
+        <li>
+          <div>Pick your instance's <b>minecraft</b> folder (the one with <code>mods</code> and <code>kubejs</code> in it).</div>
+          <div class="step-row"><button type="button" class="btn small" id="iconPickDir">Choose folder…</button><span class="hint" id="iconDirStatus">Nothing chosen</span></div>
+          <input type="file" id="iconDirInput" webkitdirectory hidden>
+        </li>
+        <li>
+          <div>Optional, for vanilla items: pick <code>minecraft-1.20.1-client.jar</code>, found in <code>PrismLauncher/libraries/com/mojang/minecraft/1.20.1/</code>.</div>
+          <div class="step-row"><label class="btn small">Choose jar…<input type="file" id="iconJarInput" accept=".jar" hidden></label><span class="hint" id="iconJarStatus">Nothing chosen</span></div>
+        </li>
+      </ol>
+      <div class="progress" id="iconProgress" hidden><div class="bar"><i id="iconBar"></i></div><div class="hint" id="iconProgressText"></div></div>
+      <div class="dialog-actions">
+        <button type="button" class="btn ghost" id="iconCancel">Close</button>
+        <button type="submit" class="btn primary" id="iconBuild" disabled>Build icons</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog id="askDialog" class="ask-dialog">
+    <form method="dialog" id="askForm" class="recipe-form">
+      <h2 id="askTitle"></h2>
+      <p id="askMessage" class="ask-message"></p>
+      <input id="askInput" autocomplete="off">
+      <div class="dialog-actions">
+        <button type="button" class="btn ghost" id="askCancel">Cancel</button>
+        <button type="submit" class="btn primary" id="askOk">OK</button>
+      </div>
+    </form>
+  </dialog>
+
+  <datalist id="machineList"></datalist>
+  <datalist id="itemList"></datalist>
+  <div class="toast" id="toast" hidden></div>
+
+  <script src="js/data.js"></script>
+  <script src="js/importer.js"></script>
+  <script src="js/icons.js"></script>
+  <script src="js/solver.js"></script>
+  <script src="js/efficiency.js"></script>
+  <script src="js/graph.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
