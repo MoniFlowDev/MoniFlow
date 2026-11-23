@@ -1,22 +1,38 @@
 # MoniFlow
 
-A recipe flow and power planner for **Monifactory** (GregTech CEu Modern). It runs in the browser and needs no build step and no install.
+A recipe flow and power planner for **Monifactory** (GregTech CEu Modern). It runs entirely in your browser — nothing is uploaded, and all your data stays local.
+
+Written in TypeScript and built with Vite.
 
 ## Run it
 
-Open `index.html` in a browser, or serve the folder:
+With [devenv](https://devenv.sh) (there is a `devenv.nix` in the repo, and `direnv allow` picks it up automatically):
 
 ```bash
-python -m http.server 8765
+devenv shell
+npm install
+npm run dev
 ```
 
 Then go to http://localhost:8765.
+
+Without devenv, any Node 22+ install will do: `npm install && npm run dev`.
+
+| Command | What it does |
+| --- | --- |
+| `npm run dev` | Dev server with hot reload |
+| `npm run build` | Type-check, then bundle to `dist/` |
+| `npm run preview` | Serve the built `dist/` |
+| `npm test` | Run the test suite |
+| `npm run check` | Type-check and test, as CI would |
+
+`npm run build` produces a plain static `dist/` you can open from disk or host anywhere.
 
 ## Get your game's recipes
 
 MoniFlow reads recipes from your own Monifactory install, so machines, EU/t and durations match your exact version. It exports every recipe the game ends up with, from every mod, after Monifactory's own changes.
 
-1. Copy `kubejs/zzz_moniflow_export.js` into `<instance>/minecraft/kubejs/server_scripts/`.
+1. Copy `public/kubejs/zzz_moniflow_export.js` into `<instance>/minecraft/kubejs/server_scripts/` (the Recipes tab also offers it as a download).
 2. Start Monifactory and load a singleplayer world. The script writes `kubejs/moniflow_recipes.json` once per script version. To export again (for example after a pack update), run `/moniflow export` in game.
 3. In MoniFlow, open the **Recipes** tab, click **Import game recipes** and pick `moniflow_recipes.json`.
 
@@ -65,14 +81,21 @@ Nothing is uploaded; the icon atlas is stored in your browser. Rebuild icons aft
 
 **Game recipes** are read-only; use **Copy & edit** to make your own version. **My recipes** start with a few GregTech-style examples (you're offered the option to remove them when you import game recipes). Durations are in ticks (20 ticks = 1 s).
 
-## Files
+## How the code is laid out
 
-- `js/data.js`: tiers, coils, machines, generator presets, starter recipes
-- `js/solver.js`: overclock math and the flow solver
-- `js/graph.js`: graph layout and SVG rendering
-- `js/efficiency.js`: recipe efficiency (ingredient-tree cost, machines, raw materials) and ranking
-- `js/importer.js`: reads the exporter's GregTech JSON, item names, IndexedDB storage
-- `js/icons.js`: jar reader and icon atlas builder
-- `js/app.js`: UI and state
-- `kubejs/zzz_moniflow_export.js`: the in-game recipe exporter
-- `test/importer.test.js`: importer and solver tests (`node test/importer.test.js`)
+Dependencies point one way: `core` and `data` know nothing about anything else, the solver and
+efficiency layers know only those, and only `ui` touches the DOM.
+
+| Directory | What lives there |
+| --- | --- |
+| `src/core/` | The vocabulary: recipe and plan types, units, number and rate formatting, item names, Minecraft `§` text |
+| `src/data/` | Static game data: voltage tiers, heating coils, machines, generator presets, starter recipes |
+| `src/solver/` | Overclock math, the recipe index, the flow solver, step naming, tier comparison |
+| `src/efficiency/` | What each item costs (one shortest-path pass over every recipe) and how the picker ranks recipes |
+| `src/import/` | Reading the exporter's JSON: ingredients, tags, tools, and IndexedDB storage for the result |
+| `src/icons/` | Jar reading, Minecraft model rendering, and the icon atlas |
+| `src/graph/` | Layered graph layout, SVG rendering, pan/zoom and hit testing |
+| `src/state/` | The store, persistence, item search, import/export and share links |
+| `src/ui/` | Everything that touches the DOM: panels, tabs, drawer, dialogs |
+| `public/kubejs/` | The in-game recipe exporter (plain JS — it runs under KubeJS in Minecraft, not here) |
+| `test/` | Solver, importer, efficiency and graph tests, plus a jsdom smoke test that boots the whole UI |

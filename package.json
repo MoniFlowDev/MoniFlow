@@ -1,0 +1,23 @@
+{
+  "name": "moniflow",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Recipe flow and power planner for Monifactory (GregTech CEu Modern)",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "check": "tsc --noEmit && vitest run"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.6",
+    "jsdom": "^31.0.1",
+    "typescript": "^5.7.2",
+    "vite": "^6.0.7",
+    "vitest": "^5.1.1"
+  }
+}
