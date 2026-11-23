@@ -1,0 +1,9 @@
+# Only affects `vercel` CLI uploads; Git deployments use .gitignore.
+devenv.nix
+devenv.yaml
+devenv.lock
+.envrc
+.direnv/
+.devenv/
+test/
+dist/
