@@ -118,6 +118,6 @@ function row(app: App, entry: CatalogEntry, index: number, selected: boolean): s
 function emptyMessage(app: App): string {
   const hint = app.store.gameData
     ? ''
-    : ' — import game recipes in the Recipes tab to search everything';
+    : ' — import game recipes in Settings to search everything';
   return `<div class="ac-empty">No matching items${hint}</div>`;
 }

@@ -31,8 +31,9 @@ import { clearPickerEfficiency } from './picker-efficiency';
 import { renderPower } from './power-tab';
 import { openPicker, wirePicker } from './recipe-picker';
 import { openRecipeEditor, renderDatalists, wireRecipeEditor } from './recipe-editor';
-import { renderRecipes, wireRecipesTab, type RecipeSource } from './recipes-tab';
+import { wireRecipesTab, type RecipeSource } from './recipes-tab';
 import { renderDefaults, renderSidebarLists, renderTargets, wireSidebar } from './sidebar';
+import { applySettingsVisibility, renderSettingsPage, wireSettings, type SettingsPage } from './settings';
 import { renderSummary } from './summary';
 import { toast } from './toast';
 import { openSharedPlan, wireTransfer } from './transfer-bar';
@@ -49,8 +50,12 @@ export class App {
   readonly store = new Store();
   readonly graph = new GraphView();
 
-  /** Which half of the Recipes tab is showing. */
-  recipeSource: RecipeSource = 'mine';
+  /** Which half of the Settings > Recipes page is showing. */
+  recipeSource: RecipeSource = 'game';
+
+  /** Whether the Settings area is showing instead of the main layout, and which page. */
+  settingsOpen = false;
+  settingsPage: SettingsPage = 'icons';
 
   /* ------------------------------ lifecycle ------------------------------ */
 
@@ -66,6 +71,7 @@ export class App {
     wirePicker(this);
     wireIconDialog(this);
     wireTransfer(this);
+    wireSettings(this);
     wireDrawerClose(this);
 
     attachItemSearch(this, need<HTMLInputElement>('#targetSearch'), (key) => this.addTarget(key, 1), {
@@ -79,6 +85,7 @@ export class App {
     icons.onChange(() => {
       clearLineColorCache();
       if (this.store.activeTab === 'flow') renderFlow(this);
+      if (this.settingsOpen) renderSettingsPage(this);
     });
 
     this.renderStatic();
@@ -100,6 +107,7 @@ export class App {
     renderSummary(this);
     this.renderActiveTab();
     renderDrawer(this);
+    if (this.settingsOpen) renderSettingsPage(this);
   }
 
   /** Redraw the parts that only change when the plan or library does, not on every solve. */
@@ -121,21 +129,35 @@ export class App {
       case 'power':
         renderPower(this);
         break;
-      case 'recipes':
-        renderRecipes(this);
-        break;
     }
   }
 
   setTab(tab: TabName): void {
     this.store.activeTab = tab;
     setActive('#tabs button', 'tab', tab);
-    for (const panel of all('.tab-panel')) {
+    for (const panel of all('.tab-panel', need('#mainLayout'))) {
       panel.classList.toggle('active', panel.id === `tab-${tab}`);
     }
     this.renderActiveTab();
     // The graph could not size itself while its tab was hidden.
     if (tab === 'flow') requestAnimationFrame(() => this.graph.onResize());
+  }
+
+  toggleSettings(): void {
+    this.settingsOpen = !this.settingsOpen;
+    applySettingsVisibility(this);
+  }
+
+  /** Switch back to the plan view, e.g. after acting on a recipe from Settings. */
+  closeSettings(): void {
+    if (!this.settingsOpen) return;
+    this.settingsOpen = false;
+    applySettingsVisibility(this);
+  }
+
+  setSettingsPage(page: SettingsPage): void {
+    this.settingsPage = page;
+    renderSettingsPage(this);
   }
 
   switchProject(id: string): void {

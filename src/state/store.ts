@@ -15,7 +15,7 @@ import { ItemCatalog } from './item-catalog';
 import { loadState, saveState } from './persistence';
 import { defaultState } from './project';
 
-export type TabName = 'flow' | 'machines' | 'power' | 'recipes';
+export type TabName = 'flow' | 'machines' | 'power';
 
 /** What the drawer is showing. */
 export type Selection =

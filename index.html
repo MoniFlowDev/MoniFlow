@@ -29,10 +29,60 @@
       <button class="btn ghost" id="btnShare" title="Copy a link containing this plan">Share link</button>
       <button class="btn ghost" id="btnExport" title="Download everything as JSON">Export</button>
       <label class="btn ghost" title="Import a MoniFlow JSON file">Import<input type="file" id="fileImport" accept=".json,application/json" hidden></label>
+      <button class="btn ghost" id="btnSettings" title="Icons and recipe library">Settings</button>
     </div>
   </header>
 
-  <div class="layout">
+  <div class="layout" id="settingsLayout" hidden>
+    <aside class="sidebar">
+      <section class="panel">
+        <button class="btn ghost" id="btnSettingsHome">&larr; Back to home</button>
+      </section>
+
+      <section class="panel">
+        <div class="panel-head"><h2>Settings</h2></div>
+        <nav class="settings-nav" id="settingsNav">
+          <button data-page="icons" class="active">Icons</button>
+          <button data-page="recipes">Recipes</button>
+        </nav>
+      </section>
+    </aside>
+
+    <main class="main">
+      <section class="tab-panel active" id="settings-icons">
+        <section class="panel">
+          <div class="panel-head"><h2>Item &amp; machine icons</h2><span class="hint">Built from your instance's own textures</span></div>
+          <div id="iconPanel"></div>
+        </section>
+      </section>
+
+      <section class="tab-panel" id="settings-recipes">
+        <section class="panel">
+          <div class="panel-head"><h2>Game recipes</h2><span class="hint">Import your Monifactory install's recipes</span></div>
+          <div id="gameDataPanel"></div>
+        </section>
+
+        <section class="panel">
+          <div class="panel-head"><h2>Recipe library</h2><span class="hint">Back up or restore your own recipes</span></div>
+          <div class="settings-actions">
+            <button class="btn ghost" id="btnExportLib">Export library</button>
+            <label class="btn ghost">Import library<input type="file" id="fileImportLib" accept=".json,application/json" hidden></label>
+            <button class="btn ghost danger" id="btnResetLib" title="Add back any missing starter recipes">Restore starters</button>
+          </div>
+        </section>
+
+        <div class="recipes-toolbar">
+          <div class="seg" id="recipeSrcSeg"><button data-src="mine">My recipes</button><button data-src="game">Game recipes</button></div>
+          <input type="search" id="recipeSearch" placeholder="Search recipes, machines, items…">
+          <button class="btn primary" id="btnNewRecipe">＋ New recipe</button>
+        </div>
+        <p class="hint lib-note">Game recipes come from your own install and are read-only; use "Copy &amp; edit" to change one. My recipes are yours to edit (durations in ticks, 20 ticks = 1 s).</p>
+        <div id="recipeList"></div>
+      </section>
+    </main>
+  </div>
+
+  <div class="layout" id="mainLayout">
     <aside class="sidebar">
       <section class="panel">
         <div class="panel-head"><h2>Targets</h2><span class="hint">What you want to make</span></div>
@@ -83,7 +133,6 @@
         <button data-tab="flow" class="active">Flow graph</button>
         <button data-tab="machines">Machines</button>
         <button data-tab="power">Power</button>
-        <button data-tab="recipes">Recipes</button>
       </nav>
 
       <section class="tab-panel active" id="tab-flow">
@@ -110,7 +159,7 @@
           </div>
           <div class="empty" id="graphEmpty" hidden>
             <h3>Nothing to show yet</h3>
-            <p>Use <b>Find an item to make</b> on the left and pick a recipe. Then click <b>+</b> on any input to keep building the tree. Import your game recipes in the Recipes tab to search everything.</p>
+            <p>Use <b>Find an item to make</b> on the left and pick a recipe. Then click <b>+</b> on any input to keep building the tree. Import your game recipes in Settings to search everything.</p>
           </div>
         </div>
       </section>
@@ -121,20 +170,6 @@
 
       <section class="tab-panel" id="tab-power">
         <div id="powerView"></div>
-      </section>
-
-      <section class="tab-panel" id="tab-recipes">
-        <div id="gamePanel"></div>
-        <div class="recipes-toolbar">
-          <div class="seg" id="recipeSrcSeg"><button data-src="mine">My recipes</button><button data-src="game">Game recipes</button></div>
-          <input type="search" id="recipeSearch" placeholder="Search recipes, machines, items…">
-          <button class="btn primary" id="btnNewRecipe">＋ New recipe</button>
-          <button class="btn ghost" id="btnExportLib">Export library</button>
-          <label class="btn ghost">Import library<input type="file" id="fileImportLib" accept=".json,application/json" hidden></label>
-          <button class="btn ghost danger" id="btnResetLib" title="Add back any missing starter recipes">Restore starters</button>
-        </div>
-        <p class="hint lib-note">Game recipes come from your own install and are read-only; use "Copy &amp; edit" to change one. My recipes are yours to edit (durations in ticks, 20 ticks = 1 s).</p>
-        <div id="recipeList"></div>
       </section>
     </main>
 

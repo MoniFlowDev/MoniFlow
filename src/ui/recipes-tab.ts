@@ -1,5 +1,5 @@
 /**
- * The Recipes tab: your own recipe library and the read-only game set, side by side.
+ * The Settings > Recipes page: your own recipe library and the read-only game set, side by side.
  *
  * The game set can be tens of thousands of recipes, so the grid renders at most a screenful and
  * says how many matched — the search box is the way through it, not scrolling.
@@ -13,7 +13,6 @@ import type { App } from './app';
 import { confirmAction } from './ask';
 import { machineIcon, recipeBadge, recipeTiming } from './badges';
 import { all, need, setActive } from './dom';
-import { renderGamePanel } from './game-panel';
 import { ioChips } from './io-chips';
 import { recipeSearchText } from './recipe-text';
 
@@ -23,7 +22,6 @@ const LIMIT = 120;
 export type RecipeSource = 'mine' | 'game';
 
 export function renderRecipes(app: App): void {
-  renderGamePanel(app);
   renderSourceTabs(app);
   renderRecipeGrid(app);
 }
@@ -194,6 +192,7 @@ function makeThis(app: App, recipe: Recipe): void {
   app.store.project.choices[product.item] = recipe.id;
   app.addTarget(product.item, 1);
   app.setTab('flow');
+  app.closeSettings();
 }
 
 export function wireRecipesTab(app: App): void {
