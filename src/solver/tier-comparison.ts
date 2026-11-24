@@ -32,7 +32,13 @@ export function tierComparison(step: SolvedStep): TierOption[] {
       coilTemp: coilTemp(settings.coil),
     });
     const machines = step.rate / oc.craftsPerSec;
-    options.push({ tier: t, oc, machines, built: Math.ceil(machines - EPSILON), avgEut: machines * oc.eut });
+    options.push({
+      tier: t,
+      oc,
+      machines,
+      built: Math.ceil(machines - EPSILON),
+      avgEut: machines * oc.eut,
+    });
     if (oc.dur <= 1 && t > start + 1) break;
   }
   return options;

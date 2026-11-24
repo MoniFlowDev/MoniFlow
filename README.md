@@ -2,7 +2,7 @@
 
 A recipe flow and power planner for **Monifactory** (GregTech CEu Modern). It runs entirely in your browser — nothing is uploaded, and all your data stays local.
 
-Written in TypeScript and built with Vite.
+Built with Svelte 5, TypeScript, Tailwind CSS 4, sv-router, and Vite. The existing SVG graph renderer remains in TypeScript.
 
 ## Run it
 
@@ -18,13 +18,13 @@ Then go to http://localhost:8765.
 
 Without devenv, any Node 22+ install will do: `npm install && npm run dev`.
 
-| Command | What it does |
-| --- | --- |
-| `npm run dev` | Dev server with hot reload |
-| `npm run build` | Type-check, then bundle to `dist/` |
-| `npm run preview` | Serve the built `dist/` |
-| `npm test` | Run the test suite |
-| `npm run check` | Type-check and test, as CI would |
+| Command           | What it does                       |
+| ----------------- | ---------------------------------- |
+| `npm run dev`     | Dev server with hot reload         |
+| `npm run build`   | Type-check, then bundle to `dist/` |
+| `npm run preview` | Serve the built `dist/`            |
+| `npm test`        | Run the test suite                 |
+| `npm run check`   | Type-check and test, as CI would   |
 
 `npm run build` produces a plain static `dist/` you can open from disk or host anywhere.
 
@@ -44,7 +44,7 @@ The game recipes are stored in your browser (IndexedDB), so you only import once
 
 ## Item and machine icons
 
-After importing game recipes, click **Build icons** in the Recipes tab and pick your instance's `minecraft` folder (and optionally `minecraft-1.20.1-client.jar` from `PrismLauncher/libraries/com/mojang/minecraft/1.20.1/` for vanilla items). MoniFlow reads the textures and models straight out of your mod jars, including mods bundled inside other jars, and draws:
+After importing game recipes, open **Settings → Icons**, click **Build icons**, and pick your instance's `minecraft` folder (and optionally `minecraft-1.20.1-client.jar` from `PrismLauncher/libraries/com/mojang/minecraft/1.20.1/` for vanilla items). MoniFlow reads the textures and models straight out of your mod jars, including mods bundled inside other jars, and draws:
 
 - flat item icons, and real 3D renders of block models (anvils, stairs, hoppers, machines…) using each model's elements, UVs and inventory camera;
 - GregTech wires, cables and pipes as 3D segments with the right thickness, end textures and cable insulation;
@@ -84,18 +84,50 @@ Nothing is uploaded; the icon atlas is stored in your browser. Rebuild icons aft
 ## How the code is laid out
 
 Dependencies point one way: `core` and `data` know nothing about anything else, the solver and
-efficiency layers know only those, and only `ui` touches the DOM.
+efficiency layers know only those, and the Svelte components own the application UI. The graph and icon rendering services retain their own imperative drawing code.
 
-| Directory | What lives there |
-| --- | --- |
-| `src/core/` | The vocabulary: recipe and plan types, units, number and rate formatting, item names, Minecraft `§` text |
-| `src/data/` | Static game data: voltage tiers, heating coils, machines, generator presets, starter recipes |
-| `src/solver/` | Overclock math, the recipe index, the flow solver, step naming, tier comparison |
-| `src/efficiency/` | What each item costs (one shortest-path pass over every recipe) and how the picker ranks recipes |
-| `src/import/` | Reading the exporter's JSON: ingredients, tags, tools, and IndexedDB storage for the result |
-| `src/icons/` | Jar reading, Minecraft model rendering, and the icon atlas |
-| `src/graph/` | Layered graph layout, SVG rendering, pan/zoom and hit testing |
-| `src/state/` | The store, persistence, item search, import/export and share links |
-| `src/ui/` | Everything that touches the DOM: panels, tabs, drawer, dialogs |
-| `public/kubejs/` | The in-game recipe exporter (plain JS — it runs under KubeJS in Minecraft, not here) |
-| `test/` | Solver, importer, efficiency and graph tests, plus a jsdom smoke test that boots the whole UI |
+| Directory         | What lives there                                                                                           |
+| ----------------- | ---------------------------------------------------------------------------------------------------------- |
+| `src/core/`       | The vocabulary: recipe and plan types, units, number and rate formatting, item names, Minecraft `§` text   |
+| `src/data/`       | Static game data: voltage tiers, heating coils, machines, generator presets, starter recipes               |
+| `src/solver/`     | Overclock math, the recipe index, the flow solver, step naming, tier comparison                            |
+| `src/efficiency/` | What each item costs (one shortest-path pass over every recipe) and how the picker ranks recipes           |
+| `src/import/`     | Reading the exporter's JSON: ingredients, tags, tools, and IndexedDB storage for the result                |
+| `src/icons/`      | Jar reading, Minecraft model rendering, and the icon atlas                                                 |
+| `src/graph/`      | Layered graph layout, SVG rendering, pan/zoom and hit testing                                              |
+| `src/state/`      | App-scoped Svelte rune state, derived solver/index/search data, persistence, import/export and share links |
+| `src/components/` | Svelte controls, sidebar, drawers, dialogs, and the existing graph’s lifecycle wrapper                     |
+| `src/pages/`      | Routed Svelte views for flow, machines, power, recipes, and icons                                          |
+| `src/router.ts`   | Typed sv-router routes and navigation                                                                      |
+| `public/kubejs/`  | The in-game recipe exporter (plain JS — it runs under KubeJS in Minecraft, not here)                       |
+| `test/`           | Solver, importer, efficiency and graph tests, plus Svelte/jsdom interaction tests for the whole app        |
+
+## Routing and state
+
+Routes are `/`, `/machines`, `/power`, `/settings/recipes`, and `/settings/icons`.
+The URL owns page navigation; shared state is created once by `App.svelte` and passed through
+Svelte context. Editable plan data uses `$state`, computed data uses `$derived`, and the large
+read-only imported game set uses `$state.raw`. Component-local state owns search filters and
+unsaved form drafts. Plans, backups, share hashes (`#plan=…`), and IndexedDB data retain their
+existing formats.
+
+`FlowGraph.svelte` keeps the original `GraphView` mounted while navigating, preserving pan/zoom.
+It forwards selections and completed drags to app actions, and detaches graph listeners and
+observers when the application unmounts. Its SVG descendants and hover card are owned by the
+renderer; all surrounding UI is Svelte. Graph styles are in `src/styles/graph.css`; UI styling
+uses Tailwind utilities and the theme in `src/styles/app.css`.
+
+Path-based routing requires the host to serve `index.html` for app routes. `vercel.json`
+configures this fallback while leaving `/assets/` and `/kubejs/` files alone. Opening `dist/index.html`
+directly through `file://` is no longer supported; serve the build with an HTTP server.
+
+`npm run typecheck` runs Svelte and TypeScript diagnostics. `npm run check` also runs tests;
+`npm run build` checks types and creates the production bundle.
+
+## Formatting
+
+Biome is the project formatter. The `format` npm script formats all supported project files;
+`format:check` verifies formatting without writing. It respects `.gitignore` and excludes the
+generated `package-lock.json`. Configuration lives in `biome.json`, including full Svelte 5
+markup formatting and Tailwind CSS directive support. Svelte markup whitespace remains
+CSS-sensitive to preserve rendered text spacing.

@@ -118,9 +118,8 @@ function stepCard(node: Extract<GraphNode, { kind: 'recipe' }>): string {
 }
 
 function itemCard(node: Extract<GraphNode, { kind: 'raw' | 'out' | 'sur' }>): string {
-  const label = node.kind === 'raw' && node.manual
-    ? 'Supplied by you · chain hidden'
-    : KIND_LABELS[node.kind];
+  const label =
+    node.kind === 'raw' && node.manual ? 'Supplied by you · chain hidden' : KIND_LABELS[node.kind];
 
   const hint = node.manual
     ? 'Click + to show the chain that makes it again'
@@ -148,10 +147,12 @@ export function edgeCardHtml(edge: GraphEdge, graph: Graph): string {
           : 'Raw input'
         : 'Byproduct, not used in this plan';
 
-    return `${title}
+    return (
+      `${title}
       <div class="tip-grid"><span>Flow</span><b>${formatRate(edge.rate, edge.fluid)}</b>` +
       `<span>${edge.stub === 'in' ? 'Into' : 'From'}</span><b>${machine}</b></div>
-      <div class="tip-foot">${note} · click for details</div>`;
+      <div class="tip-foot">${note} · click for details</div>`
+    );
   }
 
   const endpointName = (id: string): string => {
@@ -162,8 +163,10 @@ export function edgeCardHtml(edge: GraphEdge, graph: Graph): string {
       : EDGE_ENDPOINT_LABELS[node.kind];
   };
 
-  return `${title}
+  return (
+    `${title}
     <div class="tip-grid"><span>Flow</span><b>${formatRate(edge.rate, edge.fluid)}</b>` +
     `<span>From</span><b>${endpointName(edge.from)}</b>` +
-    `<span>To</span><b>${endpointName(edge.to)}</b></div>`;
+    `<span>To</span><b>${endpointName(edge.to)}</b></div>`
+  );
 }

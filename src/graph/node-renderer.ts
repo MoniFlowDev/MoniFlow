@@ -45,14 +45,14 @@ const MONO = 'Consolas, monospace';
 const PAD_HORIZONTAL = 16;
 const PAD_VERTICAL = 10;
 
-export function drawNode(
-  layer: SVGElement,
-  node: GraphNode,
-  dir: DirectionSpec,
-): void {
+export function drawNode(layer: SVGElement, node: GraphNode, dir: DirectionSpec): void {
   const group = el(
     'g',
-    { class: `g-node g-node-${node.kind}`, 'data-id': node.id, transform: `translate(${node.x},${node.y})` },
+    {
+      class: `g-node g-node-${node.kind}`,
+      'data-id': node.id,
+      transform: `translate(${node.x},${node.y})`,
+    },
     layer,
   );
 
@@ -256,8 +256,16 @@ function drawNumbers(group: SVGGElement, step: SolvedStep, at: NumbersLayout): v
       : busy > 0.5
         ? UTILISATION_COLORS.medium
         : UTILISATION_COLORS.low;
-  el('rect', { x: 0, y: height - 3, width, height: 3, fill: COLORS.track, 'clip-path': clip }, group);
-  el('rect', { x: 0, y: height - 3, width: width * busy, height: 3, fill: barColor, 'clip-path': clip }, group);
+  el(
+    'rect',
+    { x: 0, y: height - 3, width, height: 3, fill: COLORS.track, 'clip-path': clip },
+    group,
+  );
+  el(
+    'rect',
+    { x: 0, y: height - 3, width: width * busy, height: 3, fill: barColor, 'clip-path': clip },
+    group,
+  );
 }
 
 function drawItemNode(group: SVGGElement, node: ItemNode, clip: string): void {
@@ -300,11 +308,29 @@ function drawItemNode(group: SVGGElement, node: ItemNode, clip: string): void {
   });
 
   if (node.manual) {
-    button(group, node.w - 26, (node.h - 18) / 2, '+', 'expand', node.item,
-      'Show the chain that makes this again', 18, 'faint');
+    button(
+      group,
+      node.w - 26,
+      (node.h - 18) / 2,
+      '+',
+      'expand',
+      node.item,
+      'Show the chain that makes this again',
+      18,
+      'faint',
+    );
   } else if (node.kind === 'raw' && node.expandable) {
-    button(group, node.w - 26, (node.h - 18) / 2, '+', 'pick', node.item,
-      'Pick a recipe to make this', 18, 'faint');
+    button(
+      group,
+      node.w - 26,
+      (node.h - 18) / 2,
+      '+',
+      'pick',
+      node.item,
+      'Pick a recipe to make this',
+      18,
+      'faint',
+    );
   }
 }
 
@@ -344,7 +370,12 @@ export function placePorts(node: RecipeNode, dir: DirectionSpec): void {
 }
 
 /** Grow a recipe node so every port icon has room on the side lines attach to. */
-export function sizeForPorts(node: RecipeNode, dir: DirectionSpec, baseW: number, baseH: number): void {
+export function sizeForPorts(
+  node: RecipeNode,
+  dir: DirectionSpec,
+  baseW: number,
+  baseH: number,
+): void {
   const ports = Math.max(node.inPorts.length, node.outPorts.length);
   if (dir.horizontal) node.h = Math.max(baseH, ports * PORT_STEP + 14);
   else node.w = Math.max(baseW, ports * PORT_STEP + 28);

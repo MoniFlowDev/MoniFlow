@@ -73,7 +73,17 @@ export function flatIcon(layers: readonly Drawable[], round = false): AnyCanvas 
   }
 
   const face = stack(layers);
-  ctx.drawImage(face, 0, 0, face.width, face.height, inset, inset, ICON_PX - inset * 2, ICON_PX - inset * 2);
+  ctx.drawImage(
+    face,
+    0,
+    0,
+    face.width,
+    face.height,
+    inset,
+    inset,
+    ICON_PX - inset * 2,
+    ICON_PX - inset * 2,
+  );
   return canvas;
 }
 
@@ -143,6 +153,9 @@ export function shadedTexture(texture: Drawable, shade: number): Drawable {
 export async function toPngBlob(canvas: AnyCanvas): Promise<Blob> {
   if ('convertToBlob' in canvas) return canvas.convertToBlob({ type: 'image/png' });
   return new Promise<Blob>((resolve, reject) => {
-    canvas.toBlob((blob) => (blob ? resolve(blob) : reject(new Error('toBlob failed'))), 'image/png');
+    canvas.toBlob(
+      (blob) => (blob ? resolve(blob) : reject(new Error('toBlob failed'))),
+      'image/png',
+    );
   });
 }

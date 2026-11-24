@@ -361,12 +361,7 @@ function assemble(body: RecipeBody, id: string, type: string): Recipe {
 }
 
 /** Recipe ids should be unique, but duplicates do happen; disambiguate rather than drop. */
-function uniqueId(
-  id: string | null,
-  type: string,
-  index: number,
-  used: Set<string>,
-): string {
+function uniqueId(id: string | null, type: string, index: number, used: Set<string>): string {
   let candidate = `g:${id ?? `${type}:${index}`}`;
   if (used.has(candidate)) candidate += `#${index}`;
   used.add(candidate);
@@ -391,7 +386,9 @@ function cleanroomFromConditions(conditions: unknown): Recipe['cond'] | null {
 function exportErrors(errors: unknown): string[] {
   if (Array.isArray(errors)) return errors.slice(0, MAX_EXPORT_ERRORS).map(String);
   if (errors && typeof errors === 'object') {
-    return Object.values(errors).map(String).slice(0, MAX_EXPORT_ERRORS + 1);
+    return Object.values(errors)
+      .map(String)
+      .slice(0, MAX_EXPORT_ERRORS + 1);
   }
   return [];
 }

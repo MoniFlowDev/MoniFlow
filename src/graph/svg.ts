@@ -111,7 +111,8 @@ export function button(
   );
   el('rect', { width: size, height: size, rx: 5 }, group);
   // No `g-text` class here: button glyphs are styled by `.g-btn text`.
-  el('text', { x: size / 2, y: size / 2 + 4.5, 'text-anchor': 'middle' }, group).textContent = glyph;
+  el('text', { x: size / 2, y: size / 2 + 4.5, 'text-anchor': 'middle' }, group).textContent =
+    glyph;
   el('title', null, group).textContent = title;
   return group;
 }

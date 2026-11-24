@@ -52,8 +52,12 @@ export function formatDuration(ticks: number): string {
 
 /** A fluid amount in whichever unit fits: mB, B (a bucket is 1000 mB), kB, MB. */
 export function formatFluid(mb: number): string {
+  return formatFluidAmount(mb, fluidUnitMode);
+}
+
+function formatFluidAmount(mb: number, mode: FluidUnitMode): string {
   const abs = Math.abs(mb);
-  if (fluidUnitMode === 'mb') {
+  if (mode === 'mb') {
     // Whole numbers with separators ("10,000 mB") read better than "10.0k mB"; only shorten past a million.
     if (abs >= 1000 && abs < 1e6) return `${Math.round(mb).toLocaleString('en-US')} mB`;
     return `${formatNumber(mb)} mB`;
@@ -78,4 +82,17 @@ export function formatRate(ratePerSecond: number, fluid?: boolean): string {
 
 export function plural(n: number, word: string): string {
   return `${n.toLocaleString()} ${word}${n === 1 ? '' : 's'}`;
+}
+
+/** Explicit preferences for reactive UI callers; legacy graph formatters keep their API. */
+export function createFormatter(unit: RateUnit, fluids: FluidUnitMode) {
+  const fluid = (mb: number): string => formatFluidAmount(mb, fluids);
+  return {
+    multiplier: RATE_UNITS[unit].multiplier,
+    label: RATE_UNITS[unit].label,
+    fluid,
+    amount: (n: number, isFluid = false) => (isFluid ? fluid(n) : `${formatNumber(n)}×`),
+    rate: (n: number, isFluid = false) =>
+      `${isFluid ? fluid(n * RATE_UNITS[unit].multiplier) : formatNumber(n * RATE_UNITS[unit].multiplier)}${RATE_UNITS[unit].label}`,
+  };
 }

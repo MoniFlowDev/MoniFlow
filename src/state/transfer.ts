@@ -42,7 +42,10 @@ export function sanitizeRecipe(input: unknown): Recipe | null {
 
   const sides = (value: unknown): RecipeIO[] =>
     (Array.isArray(value) ? value : [])
-      .filter((entry): entry is Record<string, unknown> => !!entry && typeof entry === 'object' && !!entry['item'])
+      .filter(
+        (entry): entry is Record<string, unknown> =>
+          !!entry && typeof entry === 'object' && !!entry['item'],
+      )
       .map((entry) => {
         const io: RecipeIO = { item: String(entry['item']), amount: Number(entry['amount']) || 0 };
         if (entry['fluid']) io.fluid = true;

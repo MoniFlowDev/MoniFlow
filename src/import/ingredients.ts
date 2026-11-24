@@ -201,7 +201,9 @@ export function parseEut(tickInputs: unknown): number {
       eut += Number(content) || 0;
     } else {
       const rec = asRecord(content);
-      if (rec) eut += (Number(rec['voltage'] ?? rec['eu'] ?? 0) || 0) * (Number(rec['amperage'] ?? 1) || 1);
+      if (rec)
+        eut +=
+          (Number(rec['voltage'] ?? rec['eu'] ?? 0) || 0) * (Number(rec['amperage'] ?? 1) || 1);
     }
   }
   return eut;

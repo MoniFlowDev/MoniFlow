@@ -49,7 +49,8 @@ export function itemLineColor(item: ItemKey, fluid?: boolean): string {
   const cached = lineColors.get(item);
   if (cached) return cached;
 
-  const rgb = materialRgb(item) ?? (fluid ? hexToRgb(fluidColor(item)) : null) ?? icons.iconColor(item);
+  const rgb =
+    materialRgb(item) ?? (fluid ? hexToRgb(fluidColor(item)) : null) ?? icons.iconColor(item);
   const color = rgb ? toneForDarkBackground(rgb) : itemColor(item, fluid);
 
   // Only cache once icon colours are available (or will never be), so lines update after loading.
@@ -71,7 +72,8 @@ export function fluidColor(item: ItemKey): string {
   if (material && !/^ffffff\|/i.test(material)) return `#${material.split('|')[0]}`;
 
   const sampled = icons.iconColor(item);
-  if (sampled) return `#${sampled.map((v) => Math.round(v).toString(16).padStart(2, '0')).join('')}`;
+  if (sampled)
+    return `#${sampled.map((v) => Math.round(v).toString(16).padStart(2, '0')).join('')}`;
 
   return material ? '#ffffff' : itemColor(item, true);
 }

@@ -327,9 +327,7 @@ function orderWithinColumns(
       );
 
       ids.sort(
-        (a, b) =>
-          barycentre.get(a)! - barycentre.get(b)! ||
-          kindRank(all, a) - kindRank(all, b),
+        (a, b) => barycentre.get(a)! - barycentre.get(b)! || kindRank(all, a) - kindRank(all, b),
       );
       renumber(ids);
     }

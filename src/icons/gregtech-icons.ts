@@ -34,10 +34,7 @@ const PIPE_SIZES = ['tiny', 'small', 'normal', 'large', 'huge', 'quadruple', 'no
 const WATER_COLOR = '#3f76e4';
 
 /** Draw one GregTech item from its exported icon recipe. */
-export async function gregtechIcon(
-  repo: ModelRepository,
-  spec: string,
-): Promise<AnyCanvas | null> {
+export async function gregtechIcon(repo: ModelRepository, spec: string): Promise<AnyCanvas | null> {
   const parts = spec.split('|');
   if (parts[0] === 'pipe') return pipeIcon(repo, parts);
   if (parts[0] === 'tool') return toolIcon(repo, parts);
@@ -181,14 +178,20 @@ async function wireFaces(
   set: string,
   half: number,
 ): Promise<PipeFaces> {
-  const wireSide = await repo.materialSetTexture(`gtceu:block/material_sets/${set}/wire_side`, color);
+  const wireSide = await repo.materialSetTexture(
+    `gtceu:block/material_sets/${set}/wire_side`,
+    color,
+  );
   const wireEnd =
     (await repo.materialSetTexture(`gtceu:block/material_sets/${set}/wire_end`, color)) ?? wireSide;
 
   if (kind === 'wire') return { side: wireSide, end: wireEnd };
 
   // A cable is insulated: rubber outside, with the wire core showing at the cut ends.
-  const sizeIndex = Math.max(0, WIRE_SIZES.findIndex((size) => typeName.includes(size)));
+  const sizeIndex = Math.max(
+    0,
+    WIRE_SIZES.findIndex((size) => typeName.includes(size)),
+  );
   const insulation =
     (await repo.layer(`gtceu:block/cable/insulation_${sizeIndex}`, INSULATION_COLOR)) ??
     (await repo.layer('gtceu:block/cable/insulation_0', INSULATION_COLOR));

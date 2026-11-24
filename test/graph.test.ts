@@ -13,7 +13,13 @@ const index = buildRecipeIndex([
   recipe('a', { inputs: [['ore', 1]], outputs: [['x', 1]] }),
   recipe('b', { inputs: [['x', 1]], outputs: [['y', 1]] }),
   recipe('c', { inputs: [['y', 1]], outputs: [['z', 1]] }),
-  recipe('d', { inputs: [['z', 1], ['x', 1]], outputs: [['t', 1]] }),
+  recipe('d', {
+    inputs: [
+      ['z', 1],
+      ['x', 1],
+    ],
+    outputs: [['t', 1]],
+  }),
 ]);
 const solution = solve(plan({ targets: [{ item: 't', rate: 1 }] }), index);
 

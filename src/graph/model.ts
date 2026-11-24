@@ -282,8 +282,7 @@ function collapseToStubs(graph: Graph): void {
 
     const own = graph.edges.filter((e) => (isRaw ? e.from : e.to) === id);
     const onlyTouchesSteps =
-      own.length > 0 &&
-      own.every((e) => graph.nodes.get(isRaw ? e.to : e.from)?.kind === 'recipe');
+      own.length > 0 && own.every((e) => graph.nodes.get(isRaw ? e.to : e.from)?.kind === 'recipe');
     if (!onlyTouchesSteps) continue;
 
     graph.nodes.delete(id);

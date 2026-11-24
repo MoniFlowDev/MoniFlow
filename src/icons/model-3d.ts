@@ -10,7 +10,14 @@
  * This is what makes an anvil, a hopper or a GregTech machine look like itself instead of a flat
  * square of its side texture.
  */
-import { context, ICON_PX, makeCanvas, shadedTexture, type AnyCanvas, type Drawable } from './canvas';
+import {
+  context,
+  ICON_PX,
+  makeCanvas,
+  shadedTexture,
+  type AnyCanvas,
+  type Drawable,
+} from './canvas';
 
 /** The inventory camera from `minecraft:block/block`. */
 const DEFAULT_GUI: Required<DisplayTransform> = {
@@ -71,17 +78,47 @@ function faceCorners(dir: Direction, from: Vec3, to: Vec3): Vec3[] | null {
   const [tx, ty, tz] = to;
   switch (dir) {
     case 'north':
-      return [[tx, ty, fz], [fx, ty, fz], [fx, fy, fz], [tx, fy, fz]];
+      return [
+        [tx, ty, fz],
+        [fx, ty, fz],
+        [fx, fy, fz],
+        [tx, fy, fz],
+      ];
     case 'south':
-      return [[fx, ty, tz], [tx, ty, tz], [tx, fy, tz], [fx, fy, tz]];
+      return [
+        [fx, ty, tz],
+        [tx, ty, tz],
+        [tx, fy, tz],
+        [fx, fy, tz],
+      ];
     case 'west':
-      return [[fx, ty, fz], [fx, ty, tz], [fx, fy, tz], [fx, fy, fz]];
+      return [
+        [fx, ty, fz],
+        [fx, ty, tz],
+        [fx, fy, tz],
+        [fx, fy, fz],
+      ];
     case 'east':
-      return [[tx, ty, tz], [tx, ty, fz], [tx, fy, fz], [tx, fy, tz]];
+      return [
+        [tx, ty, tz],
+        [tx, ty, fz],
+        [tx, fy, fz],
+        [tx, fy, tz],
+      ];
     case 'up':
-      return [[fx, ty, fz], [tx, ty, fz], [tx, ty, tz], [fx, ty, tz]];
+      return [
+        [fx, ty, fz],
+        [tx, ty, fz],
+        [tx, ty, tz],
+        [fx, ty, tz],
+      ];
     case 'down':
-      return [[fx, fy, tz], [tx, fy, tz], [tx, fy, fz], [fx, fy, fz]];
+      return [
+        [fx, fy, tz],
+        [tx, fy, tz],
+        [tx, fy, fz],
+        [fx, fy, fz],
+      ];
     default:
       return null;
   }
@@ -137,12 +174,26 @@ function displayMatrix(rotation: Vec3): Matrix3 {
   const [cy, sy] = [Math.cos(ay), Math.sin(ay)];
   const [cz, sz] = [Math.cos(az), Math.sin(az)];
 
-  const rx: Matrix3 = [[1, 0, 0], [0, cx, -sx], [0, sx, cx]];
-  const ry: Matrix3 = [[cy, 0, sy], [0, 1, 0], [-sy, 0, cy]];
-  const rz: Matrix3 = [[cz, -sz, 0], [sz, cz, 0], [0, 0, 1]];
+  const rx: Matrix3 = [
+    [1, 0, 0],
+    [0, cx, -sx],
+    [0, sx, cx],
+  ];
+  const ry: Matrix3 = [
+    [cy, 0, sy],
+    [0, 1, 0],
+    [-sy, 0, cy],
+  ];
+  const rz: Matrix3 = [
+    [cz, -sz, 0],
+    [sz, cz, 0],
+    [0, 0, 1],
+  ];
 
   const multiply = (a: Matrix3, b: Matrix3): Matrix3 =>
-    a.map((row) => b[0]!.map((_, j) => row.reduce((sum, v, k) => sum + v * b[k]![j]!, 0))) as Matrix3;
+    a.map((row) =>
+      b[0]!.map((_, j) => row.reduce((sum, v, k) => sum + v * b[k]![j]!, 0)),
+    ) as Matrix3;
 
   return multiply(multiply(rx, ry), rz);
 }
@@ -255,7 +306,12 @@ function paint(quads: readonly Quad[]): AnyCanvas {
     // Texture corners in pixels, rotated by the face's quarter turns.
     const perUnit = quad.texture.width / UV_UNITS;
     const [u1, v1, u2, v2] = quad.uv as [number, number, number, number];
-    const unrotated = [[u1, v1], [u2, v1], [u2, v2], [u1, v2]] as const;
+    const unrotated = [
+      [u1, v1],
+      [u2, v1],
+      [u2, v2],
+      [u1, v2],
+    ] as const;
     const tex = [0, 1, 2, 3].map((i) => {
       const [u, v] = unrotated[(i + quad.turns) % 4]!;
       return [u * perUnit, v * perUnit] as const;

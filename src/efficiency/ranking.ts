@@ -152,7 +152,10 @@ function tierDistance(row: RankedRecipe, playerTier: number): number {
  * Position of each row within the group on one measure, normalised to 0 (best) to 1 (worst).
  * Equal values share a position, so near-identical recipes don't get split apart arbitrarily.
  */
-function rankWithin(group: readonly RankedRecipe[], measure: (row: RankedRecipe) => number): number[] {
+function rankWithin(
+  group: readonly RankedRecipe[],
+  measure: (row: RankedRecipe) => number,
+): number[] {
   const values = group.map(measure);
   const distinct = [...new Set(values)].sort((a, b) => a - b);
   const positionOf = new Map(distinct.map((v, i) => [v, i]));

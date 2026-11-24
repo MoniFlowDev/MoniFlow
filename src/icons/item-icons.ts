@@ -117,15 +117,13 @@ async function textureNamedAfterItem(
   return layer ? flatIcon([layer]) : null;
 }
 
-async function drawModel(
-  repo: ModelRepository,
-  model: ResolvedModel,
-): Promise<AnyCanvas | null> {
+async function drawModel(repo: ModelRepository, model: ResolvedModel): Promise<AnyCanvas | null> {
   const textures = model.textures;
 
   // Flat artwork: an item model built from stacked `layerN` textures.
   const isFlatArtwork =
-    textures['layer0'] && (model.layered || !(textures['all'] || textures['side'] || textures['top']));
+    textures['layer0'] &&
+    (model.layered || !(textures['all'] || textures['side'] || textures['top']));
   if (isFlatArtwork) {
     const layers: Drawable[] = [];
     for (let i = 0; i < MAX_LAYERS; i++) {
@@ -156,10 +154,7 @@ async function drawModel(
 }
 
 /** An isometric cube from the model's top, front and side textures. */
-async function drawCube(
-  repo: ModelRepository,
-  model: ResolvedModel,
-): Promise<AnyCanvas | null> {
+async function drawCube(repo: ModelRepository, model: ResolvedModel): Promise<AnyCanvas | null> {
   const textures = model.textures;
   const pick = (...slots: string[]): string | null => {
     for (const slot of slots) {
@@ -199,10 +194,7 @@ async function drawCube(
 }
 
 /** Load every texture the model's faces reference, then render its geometry. */
-async function render3D(
-  repo: ModelRepository,
-  model: ResolvedModel,
-): Promise<AnyCanvas | null> {
+async function render3D(repo: ModelRepository, model: ResolvedModel): Promise<AnyCanvas | null> {
   const elements = model.elements as ModelElement[];
   const loaded = new Map<string, Drawable | null>();
 

@@ -206,15 +206,9 @@
   },
   "tags": {
     "forge:dusts/iron": "gtceu:iron_dust|someothermod:iron_dust",
-    "forge:ingots/iron": [
-      "minecraft:iron_ingot"
-    ],
-    "forge:ingots/copper": [
-      "minecraft:copper_ingot"
-    ],
-    "forge:ingots/steel": [
-      "gtceu:steel_ingot"
-    ]
+    "forge:ingots/iron": ["minecraft:iron_ingot"],
+    "forge:ingots/copper": ["minecraft:copper_ingot"],
+    "forge:ingots/steel": ["gtceu:steel_ingot"]
   },
   "errors": {
     "1": "example:recipe [recipe]: sample warning"

@@ -39,7 +39,9 @@ export function attachInteraction(
   view: GraphView,
   svg: SVGSVGElement,
   tip: HTMLElement | null,
-): void {
+): () => void {
+  const controller = new AbortController();
+  const signal = controller.signal;
   let gesture: Gesture | null = null;
   let pendingFrame = 0;
 
@@ -47,72 +49,80 @@ export function attachInteraction(
     if (tip) tip.hidden = true;
   };
 
-  svg.addEventListener('pointerdown', (event) => {
-    if (event.button !== 0) return;
-    hideTip();
+  svg.addEventListener(
+    'pointerdown',
+    (event) => {
+      if (event.button !== 0) return;
+      hideTip();
 
-    const target = event.target as Element;
-    const onButton = target.closest('.g-btn');
-    const nodeElement = onButton ? null : target.closest<SVGElement>('.g-node');
-    const node = nodeElement && view.graph?.nodes.get(nodeElement.dataset['id']!);
+      const target = event.target as Element;
+      const onButton = target.closest('.g-btn');
+      const nodeElement = onButton ? null : target.closest<SVGElement>('.g-node');
+      const node = nodeElement && view.graph?.nodes.get(nodeElement.dataset['id']!);
 
-    gesture = node
-      ? {
-          mode: 'node',
-          element: nodeElement!,
-          nodeId: node.id,
-          from: { x: event.clientX, y: event.clientY },
-          origin: { x: node.x, y: node.y },
-          moved: false,
-        }
-      : {
-          mode: 'pan',
-          from: { x: event.clientX, y: event.clientY },
-          origin: { x: view.transform.x, y: view.transform.y },
-          moved: false,
-        };
-    svg.setPointerCapture(event.pointerId);
-  });
+      gesture = node
+        ? {
+            mode: 'node',
+            element: nodeElement!,
+            nodeId: node.id,
+            from: { x: event.clientX, y: event.clientY },
+            origin: { x: node.x, y: node.y },
+            moved: false,
+          }
+        : {
+            mode: 'pan',
+            from: { x: event.clientX, y: event.clientY },
+            origin: { x: view.transform.x, y: view.transform.y },
+            moved: false,
+          };
+      svg.setPointerCapture(event.pointerId);
+    },
+    { signal },
+  );
 
-  svg.addEventListener('pointermove', (event) => {
-    if (!gesture) {
-      updateHover(view, svg, tip, event);
-      return;
-    }
+  svg.addEventListener(
+    'pointermove',
+    (event) => {
+      if (!gesture) {
+        updateHover(view, svg, tip, event);
+        return;
+      }
 
-    const dx = event.clientX - gesture.from.x;
-    const dy = event.clientY - gesture.from.y;
+      const dx = event.clientX - gesture.from.x;
+      const dy = event.clientY - gesture.from.y;
 
-    if (!gesture.moved && Math.abs(dx) + Math.abs(dy) > DRAG_THRESHOLD) {
-      gesture.moved = true;
-      svg.classList.add(gesture.mode === 'node' ? 'dragging' : 'panning');
-    }
-    if (!gesture.moved) return;
-    hideTip();
+      if (!gesture.moved && Math.abs(dx) + Math.abs(dy) > DRAG_THRESHOLD) {
+        gesture.moved = true;
+        svg.classList.add(gesture.mode === 'node' ? 'dragging' : 'panning');
+      }
+      if (!gesture.moved) return;
+      hideTip();
 
-    if (gesture.mode === 'pan') {
-      view.panBy(dx, dy, gesture.origin);
-      return;
-    }
+      if (gesture.mode === 'pan') {
+        view.panBy(dx, dy, gesture.origin);
+        return;
+      }
 
-    const node = view.graph?.nodes.get(gesture.nodeId);
-    if (!node) return;
-    const k = view.transform.k;
-    view.moveNode(
-      node,
-      Math.round((gesture.origin.x + dx / k) / SNAP) * SNAP,
-      Math.round((gesture.origin.y + dy / k) / SNAP) * SNAP,
-      gesture.element,
-    );
+      const node = view.graph?.nodes.get(gesture.nodeId);
+      if (!node) return;
+      const k = view.transform.k;
+      view.moveNode(
+        node,
+        Math.round((gesture.origin.x + dx / k) / SNAP) * SNAP,
+        Math.round((gesture.origin.y + dy / k) / SNAP) * SNAP,
+        gesture.element,
+      );
 
-    if (!pendingFrame) {
-      pendingFrame = requestAnimationFrame(() => {
-        pendingFrame = 0;
-        view.drawEdges();
-        view.highlight(view.selected);
-      });
-    }
-  });
+      if (!pendingFrame) {
+        pendingFrame = requestAnimationFrame(() => {
+          pendingFrame = 0;
+          view.drawEdges();
+          view.highlight(view.selected);
+        });
+      }
+    },
+    { signal },
+  );
 
   const finish = (event: PointerEvent): void => {
     const done = gesture;
@@ -143,16 +153,24 @@ export function attachInteraction(
     view.handlers.onSelect?.(port ? port.dataset['item']! : (node?.dataset['id'] ?? null));
   };
 
-  svg.addEventListener('pointerup', finish);
-  svg.addEventListener('pointercancel', () => {
-    gesture = null;
-    svg.classList.remove('panning', 'dragging');
-  });
+  svg.addEventListener('pointerup', finish, { signal });
+  svg.addEventListener(
+    'pointercancel',
+    () => {
+      gesture = null;
+      svg.classList.remove('panning', 'dragging');
+    },
+    { signal },
+  );
 
-  svg.addEventListener('pointerleave', () => {
-    view.setHover(null);
-    hideTip();
-  });
+  svg.addEventListener(
+    'pointerleave',
+    () => {
+      view.setHover(null);
+      hideTip();
+    },
+    { signal },
+  );
 
   svg.addEventListener(
     'wheel',
@@ -165,10 +183,19 @@ export function attachInteraction(
         Math.exp(-event.deltaY * ZOOM_PER_WHEEL_UNIT),
       );
     },
-    { passive: false },
+    { passive: false, signal },
   );
 
-  new ResizeObserver(() => view.onResize()).observe(svg);
+  const observer = new ResizeObserver(() => view.onResize());
+  observer.observe(svg);
+  return () => {
+    controller.abort();
+    observer.disconnect();
+    if (pendingFrame) cancelAnimationFrame(pendingFrame);
+    gesture = null;
+    hideTip();
+    view.setHover(null);
+  };
 }
 
 /** Work out what the pointer is over, highlight it, and position the card. */

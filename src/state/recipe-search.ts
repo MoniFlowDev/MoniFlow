@@ -21,7 +21,10 @@ const MACHINE_TIER = 1_000;
 const INGREDIENT_TIER = 0;
 
 function buildIngredientText(recipe: Recipe): string {
-  return [...recipe.inputs, ...recipe.outputs].map((io) => itemName(io.item)).join(' ').toLowerCase();
+  return [...recipe.inputs, ...recipe.outputs]
+    .map((io) => itemName(io.item))
+    .join(' ')
+    .toLowerCase();
 }
 
 export class RecipeSearchIndex {
@@ -32,7 +35,9 @@ export class RecipeSearchIndex {
 
   rebuild(pool: readonly Recipe[]): void {
     this.pool = pool;
-    this.ingredientTextByRecipe = new Map(pool.map((recipe) => [recipe, buildIngredientText(recipe)]));
+    this.ingredientTextByRecipe = new Map(
+      pool.map((recipe) => [recipe, buildIngredientText(recipe)]),
+    );
     this.byName = new Fzf(pool, { selector: (r) => r.name });
     this.byMachine = new Fzf(pool, { selector: (r) => r.machine });
   }

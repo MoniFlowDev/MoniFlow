@@ -93,9 +93,7 @@ export class ModelRepository {
     depth: number,
   ): Promise<ResolvedModel | null> {
     const raw =
-      typeof ref === 'string'
-        ? await this.fs.json<Record<string, unknown>>(modelPath(ref))
-        : ref;
+      typeof ref === 'string' ? await this.fs.json<Record<string, unknown>>(modelPath(ref)) : ref;
     if (!raw || depth > MAX_MODEL_DEPTH) return null;
 
     const fromBlockstate = await this.resolveBlockstateVariant(raw, depth);

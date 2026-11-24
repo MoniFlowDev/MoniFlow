@@ -308,10 +308,7 @@ export class CostModel {
       let estimated = 0;
       for (const [item, recipes] of makers) {
         if (cost.has(item) || !recipes.size) continue;
-        cost.set(
-          item,
-          this.estimateFromMaterial(item, cost) ?? this.asRawMaterial(item, true),
-        );
+        cost.set(item, this.estimateFromMaterial(item, cost) ?? this.asRawMaterial(item, true));
         estimated++;
         enqueueConsumers(item);
       }
@@ -324,10 +321,7 @@ export class CostModel {
   }
 
   /** Price a derived shape (liquid, nugget, plate…) from the base ingot/gem/dust of its material. */
-  private estimateFromMaterial(
-    item: ItemKey,
-    cost: Map<ItemKey, ItemCost>,
-  ): ItemCost | null {
+  private estimateFromMaterial(item: ItemKey, cost: Map<ItemKey, ItemCost>): ItemCost | null {
     const form = this.formOf(item);
     if (!form.material || form.form !== 'derived') return null;
 

@@ -123,7 +123,11 @@ export function sortPorts(graph: Graph, layout: Layout, dir: DirectionSpec): voi
     for (const [id, node] of graph.nodes) {
       if (node.kind !== 'recipe') continue;
 
-      const order = (items: ItemKey[], edges: readonly GraphEdge[], isOutput: boolean): ItemKey[] => {
+      const order = (
+        items: ItemKey[],
+        edges: readonly GraphEdge[],
+        isOutput: boolean,
+      ): ItemKey[] => {
         // Each item can have several lines; aim at their average.
         const headings = new Map<ItemKey, number[]>();
         for (const edge of edges) {

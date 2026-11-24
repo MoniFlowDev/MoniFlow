@@ -51,11 +51,15 @@ describe('sharing a recipe cost with its byproducts', () => {
   });
 
   it('charges full cost in plan mode when the plan uses no byproducts', () => {
-    const efficiency = new Efficiency(index, {}, {
-      byproducts: 'plan',
-      planUses: new Set(),
-      defaultTier: 1,
-    });
+    const efficiency = new Efficiency(
+      index,
+      {},
+      {
+        byproducts: 'plan',
+        planUses: new Set(),
+        defaultTier: 1,
+      },
+    );
     expect(efficiency.unitCost('gtceu:oxygen').eu).toBeCloseTo(45, 9);
   });
 });

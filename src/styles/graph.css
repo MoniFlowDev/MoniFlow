@@ -1,0 +1,459 @@
+/* Styles for the retained imperative SVG renderer and its hover cards. */
+.g-btn {
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.12s;
+}
+.g-node:hover .g-btn {
+  opacity: 1;
+}
+.g-btn.faint {
+  opacity: 0.5;
+}
+.g-node:hover .g-btn.faint {
+  opacity: 1;
+}
+.g-btn rect {
+  fill: #0e141b;
+  stroke: var(--line-2);
+}
+.g-btn:hover rect {
+  fill: #26364a;
+  stroke: var(--accent);
+}
+.g-btn text {
+  font:
+    700 13px system-ui,
+    sans-serif;
+  fill: var(--text-2);
+  pointer-events: none;
+}
+.g-btn:hover text {
+  fill: var(--accent);
+}
+.graph-wrap {
+  position: relative;
+  flex: 1;
+  min-height: 300px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  overflow: hidden;
+  background-color: #0b1117;
+  background-image: radial-gradient(#1d2a37 1px, transparent 1px);
+  background-size: 22px 22px;
+}
+#graph {
+  width: 100%;
+  height: 100%;
+  display: block;
+  cursor: grab;
+  user-select: none;
+}
+#graph.panning {
+  cursor: grabbing;
+}
+#graph.dragging,
+#graph.dragging * {
+  cursor: move !important;
+}
+.g-node {
+  cursor: move;
+}
+/* Rate labels (icon + item + rate) show for hovered/selected lines, or all of them with "All rates". */
+.g-label {
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.12s;
+}
+.g-label.hot,
+.g-label.sel,
+.labels-always .g-label {
+  opacity: 1;
+}
+.labels-always .g-label.crowded {
+  opacity: 0.55;
+}
+.labels-always .g-label.hot {
+  opacity: 1;
+}
+.g-label .lbl-icon circle:first-child {
+  fill: #0e141b;
+  stroke: var(--line-2);
+}
+.seg.small button {
+  padding: 3px 9px;
+  font-size: 13px;
+}
+.graph-tools {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  background: #131b24e6;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 5px 7px;
+}
+.graph-legend {
+  position: absolute;
+  left: 10px;
+  bottom: 10px;
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  font-size: 11px;
+  color: var(--text-2);
+  background: #131b24e6;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 5px 9px;
+}
+.graph-legend span {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+.lg {
+  display: inline-block;
+  width: 14px;
+  height: 4px;
+  border-radius: 2px;
+}
+.lg.item {
+  background: var(--item);
+}
+.lg.fluid {
+  background: var(--fluid);
+}
+.lg.raw,
+.lg.out,
+.lg.sur {
+  height: 10px;
+  width: 10px;
+  border-radius: 3px;
+}
+.lg.raw {
+  background: var(--raw);
+}
+.lg.out {
+  background: var(--out);
+}
+.lg.sur {
+  background: var(--sur);
+}
+.empty {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  color: var(--text-2);
+  pointer-events: none;
+}
+.empty h3 {
+  font-size: 17px;
+  color: var(--text);
+  margin-bottom: 6px;
+}
+.empty p {
+  max-width: 360px;
+  margin: 0;
+}
+
+.g-node {
+  cursor: pointer;
+}
+.g-node .card {
+  fill: var(--panel);
+  stroke: var(--line-2);
+  stroke-width: 1;
+  transition: stroke 0.12s;
+}
+.g-node,
+.g-edge {
+  transition: opacity 0.15s;
+}
+#graph.hovering .g-node:not(.hot):not(.selected) {
+  opacity: 0.38;
+}
+#graph.hovering .g-edge:not(.hot) path.flow {
+  opacity: 0.1;
+}
+.g-node.hot .card {
+  stroke: #8aa3bb;
+}
+.g-edge path.hit {
+  fill: none;
+  stroke: transparent;
+  pointer-events: stroke;
+}
+.g-node:hover .card {
+  stroke: #6b8299;
+}
+.g-node.selected .card {
+  stroke: var(--accent);
+  stroke-width: 2;
+}
+.g-node.dim,
+.g-edge.dim {
+  opacity: 0.18;
+}
+.g-edge path.flow {
+  fill: none;
+  stroke-linecap: round;
+  opacity: 0.5;
+  pointer-events: none;
+  transition: opacity 0.15s;
+}
+.g-edge.hot path.flow,
+.g-edge.sel path.flow {
+  opacity: 0.95;
+}
+.g-edge:hover path.flow {
+  opacity: 0.95;
+}
+.g-edge path.anim {
+  fill: none;
+  stroke: #fff;
+  stroke-dasharray: 2 14;
+  opacity: 0.35;
+  animation: flow 1.2s linear infinite;
+  pointer-events: none;
+  display: none;
+}
+.g-edge.hot path.anim,
+.g-edge.sel path.anim {
+  display: inline;
+}
+@keyframes flow {
+  to {
+    stroke-dashoffset: -16;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .g-edge path.anim {
+    animation: none;
+    display: none;
+  }
+}
+.g-label rect {
+  fill: #0e141bee;
+  stroke: var(--line);
+}
+.g-label text {
+  font: 10px var(--mono);
+  fill: var(--text-2);
+}
+
+/* Hover card */
+.graph-tip {
+  position: absolute;
+  z-index: 20;
+  pointer-events: none;
+  min-width: 220px;
+  max-width: 360px;
+  background: #121a23f2;
+  border: 1px solid var(--line-2);
+  border-radius: 10px;
+  padding: 10px 12px;
+  box-shadow: 0 12px 32px #000b;
+  font-size: 12px;
+  color: var(--text);
+  backdrop-filter: blur(4px);
+}
+.tip-head {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  color: var(--text-2);
+  margin-bottom: 3px;
+}
+.tip-title {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 600;
+  font-size: 13px;
+  margin-bottom: 7px;
+}
+.tip-grid {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 3px 12px;
+  font-size: 11.5px;
+}
+.tip-grid > span {
+  color: var(--text-3);
+}
+.tip-grid > b {
+  font-weight: 500;
+  font-family: var(--mono);
+  font-size: 11px;
+}
+.tip-grid em {
+  color: var(--text-3);
+  font-style: normal;
+}
+.tip-io {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid var(--line);
+}
+.tip-sub {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-3);
+  margin-bottom: 4px;
+}
+.tip-row {
+  display: grid;
+  grid-template-columns: 16px 1fr;
+  gap: 1px 6px;
+  align-items: center;
+  margin-bottom: 4px;
+}
+.tip-row .tip-name {
+  font-size: 11.5px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.tip-row .tip-rate {
+  grid-column: 2;
+  font: 10.5px var(--mono);
+  color: var(--text-2);
+}
+.tip-note {
+  margin-left: 5px;
+  font-size: 10px;
+  color: #9fd0ff;
+}
+.tip-dot {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border-radius: 3px;
+  margin: 2px;
+}
+.tip-dot.fluid {
+  border-radius: 50%;
+}
+.tip-warn {
+  margin-top: 6px;
+  color: var(--bad);
+  font-size: 11px;
+}
+.tip-hint {
+  margin-top: 8px;
+  font-size: 10.5px;
+  color: var(--text-3);
+}
+.g-text {
+  font-family: system-ui, "Segoe UI", sans-serif;
+  fill: var(--text);
+}
+
+.ico {
+  display: inline-block;
+  flex-shrink: 0;
+  vertical-align: middle;
+  background-repeat: no-repeat;
+  image-rendering: auto;
+}
+.m-ico {
+  margin-right: 2px;
+}
+.fl-wrap {
+  display: inline-flex;
+  flex-shrink: 0;
+  border-radius: 50%;
+  vertical-align: middle;
+  overflow: hidden;
+  box-shadow: inset 0 0 0 1px #0006;
+}
+.chip .ico {
+  margin-right: 1px;
+}
+.g-ico {
+  image-rendering: auto;
+  pointer-events: none;
+}
+.icon-dialog {
+  width: min(620px, calc(100vw - 32px));
+}
+.g-port rect {
+  fill: #0e141b;
+  stroke: #3a4f66;
+  stroke-width: 1;
+}
+.g-node.hot .g-port rect,
+.g-node.selected .g-port rect {
+  stroke: #6b8299;
+}
+
+/* Steps with outputs the plan doesn't use */
+.spare-note {
+  margin: -6px 0 10px;
+  font-size: 12px;
+  color: #b48cff;
+}
+.spare-tag {
+  font-size: 10.5px;
+  color: #b48cff;
+  border: 1px solid #b48cff66;
+  border-radius: 4px;
+  padding: 0 4px;
+}
+.tip-spare {
+  color: #b48cff;
+  font-family: inherit !important;
+}
+
+/* Compact mode: raw inputs / unused byproducts marked on the port icons */
+.g-port[data-item] {
+  cursor: pointer;
+}
+.g-node .g-port.raw rect {
+  stroke: #8fa8c0;
+  stroke-dasharray: 3 2;
+  stroke-width: 1.3;
+}
+.g-node .g-port.spare rect {
+  stroke: #b48cff;
+  fill: #1f1830;
+  stroke-width: 1.3;
+}
+.g-port.spare .g-ico,
+.g-port.spare image {
+  opacity: 0.8;
+}
+.g-node .g-port[data-item].hot rect,
+.g-node .g-port[data-item]:hover rect {
+  stroke-width: 2;
+  filter: brightness(1.35);
+}
+.tip-foot {
+  margin-top: 6px;
+  font-size: 11px;
+  color: #6d8197;
+}
+
+@media (max-width: 900px) {
+  .graph-wrap {
+    min-height: 480px;
+  }
+  .graph-tools {
+    max-width: calc(100% - 20px);
+    flex-wrap: wrap;
+    justify-content: flex-end;
+  }
+}

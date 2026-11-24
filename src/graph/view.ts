@@ -204,8 +204,16 @@ export class GraphView {
       );
       // A wide invisible stroke underneath makes a thin line easy to hover.
       el('path', { d, class: 'hit', 'stroke-width': Math.max(10, edge.w + 6) }, group);
-      edge.pathElement = el('path', { d, class: 'flow', stroke: color, 'stroke-width': edge.w }, group);
-      el('path', { d, class: 'anim', 'stroke-width': Math.max(1.5, edge.w * 0.35), stroke: color }, group);
+      edge.pathElement = el(
+        'path',
+        { d, class: 'flow', stroke: color, 'stroke-width': edge.w },
+        group,
+      );
+      el(
+        'path',
+        { d, class: 'anim', 'stroke-width': Math.max(1.5, edge.w * 0.35), stroke: color },
+        group,
+      );
     });
 
     this.drawLabels();
@@ -395,7 +403,8 @@ export class GraphView {
       (rect.height - FIT_PADDING * 2 - LEGEND_HEIGHT) / Math.max(1, bounds.height),
     );
     this.transform.k = Math.max(MIN_ZOOM, scale);
-    this.transform.x = (rect.width - bounds.width * this.transform.k) / 2 - bounds.minX * this.transform.k;
+    this.transform.x =
+      (rect.width - bounds.width * this.transform.k) / 2 - bounds.minX * this.transform.k;
     this.transform.y =
       (rect.height - LEGEND_HEIGHT - bounds.height * this.transform.k) / 2 -
       bounds.minY * this.transform.k;
@@ -564,7 +573,11 @@ function drawLabel(
   );
 
   const full = el('g', { class: 'lbl-full' }, group);
-  el('rect', { x: spot.rect.x, y: spot.rect.y, width: spot.rect.w, height: spot.rect.h, rx: 9 }, full);
+  el(
+    'rect',
+    { x: spot.rect.x, y: spot.rect.y, width: spot.rect.w, height: spot.rect.h, rx: 9 },
+    full,
+  );
   el('text', { x: spot.rect.x + 25, y: spot.centre.y + 3.5 }, full).textContent = label;
 
   const iconX = spot.rect.x + 3;

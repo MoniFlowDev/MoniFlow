@@ -39,10 +39,7 @@ describe('solving a chain', () => {
   });
 
   it('never auto-expands a game recipe, since the game has loops and duplicates per item', () => {
-    const solution = solve(
-      plan({ targets: [{ item: 'gtceu:steel_plate', rate: 1 }] }),
-      index,
-    );
+    const solution = solve(plan({ targets: [{ item: 'gtceu:steel_plate', rate: 1 }] }), index);
     expect(solution.steps).toHaveLength(0);
     expect(solution.raw[0]!.expandable).toBe(true);
   });
@@ -105,10 +102,8 @@ describe('naming a step after what the plan takes from it', () => {
     }),
   ]);
   const electrolysis = (targets: { item: string; rate: number }[]) =>
-    solve(
-      plan({ targets, choices: { 'gtceu:hydrogen': 'el', 'gtceu:oxygen': 'el' } }),
-      index,
-    ).steps[0]!;
+    solve(plan({ targets, choices: { 'gtceu:hydrogen': 'el', 'gtceu:oxygen': 'el' } }), index)
+      .steps[0]!;
 
   it('treats an output nothing wants as a byproduct', () => {
     const step = electrolysis([{ item: 'gtceu:hydrogen', rate: 100 }]);

@@ -108,7 +108,17 @@ export function solve(project: Project, index: RecipeIndex): Solution {
     if (step.oc.errors.length) warnings.push(`${step.recipe.name}: ${step.oc.errors.join(' ')}`);
   }
 
-  return { steps, raw, surplus, targets, balance, warnings, totals: total(steps), rates, iterations };
+  return {
+    steps,
+    raw,
+    surplus,
+    targets,
+    balance,
+    warnings,
+    totals: total(steps),
+    rates,
+    iterations,
+  };
 }
 
 /**
@@ -119,7 +129,12 @@ function findRates(
   project: Project,
   index: RecipeIndex,
   targets: Target[],
-): { rates: Map<string, number>; balance: Map<ItemKey, number>; warnings: string[]; iterations: number } {
+): {
+  rates: Map<string, number>;
+  balance: Map<ItemKey, number>;
+  warnings: string[];
+  iterations: number;
+} {
   const warnings: string[] = [];
   const rates = new Map<string, number>();
   const unproducible = new Set<string>();
@@ -260,12 +275,7 @@ function buildSteps(
   return steps;
 }
 
-function poweredStep(
-  id: string,
-  recipe: Recipe,
-  settings: NodeSettings,
-  rate: number,
-): SolvedStep {
+function poweredStep(id: string, recipe: Recipe, settings: NodeSettings, rate: number): SolvedStep {
   const useCoil = machineUsesCoil(recipe.machine) && !!recipe.temp;
   const oc = overclock(recipe, {
     tier: settings.tier,
@@ -296,12 +306,7 @@ function poweredStep(
   };
 }
 
-function instantStep(
-  id: string,
-  recipe: Recipe,
-  settings: NodeSettings,
-  rate: number,
-): SolvedStep {
+function instantStep(id: string, recipe: Recipe, settings: NodeSettings, rate: number): SolvedStep {
   return {
     id,
     recipe,

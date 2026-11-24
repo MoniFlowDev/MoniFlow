@@ -52,7 +52,9 @@ export function assignCoordinates(layout: Layout, dir: DirectionSpec): void {
   const crossSize = (node: LayoutNode): number =>
     isWaypoint(node)
       ? Math.max(MIN_WAYPOINT_WIDTH, node.edge.w || 2)
-      : dir.horizontal ? node.h : node.w;
+      : dir.horizontal
+        ? node.h
+        : node.w;
 
   const flow = placeColumns(layers, all, dir, flowSize);
   const centre = spreadAcross(layers, all, dir, crossSize);

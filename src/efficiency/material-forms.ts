@@ -30,9 +30,24 @@ export interface MaterialForm {
 const NOT_A_MATERIAL: MaterialForm = { material: null, form: null };
 
 const FORM_PREFIXES = [
-  'tiny_', 'small_', 'long_', 'double_', 'dense_', 'hot_', 'molten_', 'liquid_', 'raw_',
-  'pure_', 'impure_', 'purified_', 'refined_', 'crushed_', 'chipped_', 'flawed_',
-  'flawless_', 'exquisite_',
+  'tiny_',
+  'small_',
+  'long_',
+  'double_',
+  'dense_',
+  'hot_',
+  'molten_',
+  'liquid_',
+  'raw_',
+  'pure_',
+  'impure_',
+  'purified_',
+  'refined_',
+  'crushed_',
+  'chipped_',
+  'flawed_',
+  'flawless_',
+  'exquisite_',
 ];
 
 /** Prefixes that mean "an earlier ore-processing stage", whatever the suffix says. */
@@ -41,9 +56,25 @@ const UPSTREAM_PREFIXES = ['raw_', 'crushed_', 'purified_', 'refined_', 'pure_',
 const MAIN_SUFFIXES = ['_ingot', '_gem'];
 const UPSTREAM_SUFFIXES = ['_dust', '_ore'];
 const DERIVED_SUFFIXES = [
-  '_nugget', '_block', '_plate', '_rod', '_bolt', '_screw', '_gear', '_foil', '_ring',
-  '_round', '_spring', '_frame', '_lens', '_single_wire', '_double_wire', '_quadruple_wire',
-  '_octal_wire', '_hex_wire', '_fine_wire',
+  '_nugget',
+  '_block',
+  '_plate',
+  '_rod',
+  '_bolt',
+  '_screw',
+  '_gear',
+  '_foil',
+  '_ring',
+  '_round',
+  '_spring',
+  '_frame',
+  '_lens',
+  '_single_wire',
+  '_double_wire',
+  '_quadruple_wire',
+  '_octal_wire',
+  '_hex_wire',
+  '_fine_wire',
 ];
 
 const MAGNETIC = 'magnetic_';

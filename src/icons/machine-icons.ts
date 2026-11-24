@@ -37,7 +37,9 @@ export function machineCandidates(
     const item =
       VANILLA_MACHINE_ITEMS[base] ??
       VANILLA_MACHINE_ITEMS[path] ??
-      (CRAFTING_TYPE.test(path) || /crafting/.test(path) ? VANILLA_MACHINE_ITEMS['crafting'] : null);
+      (CRAFTING_TYPE.test(path) || /crafting/.test(path)
+        ? VANILLA_MACHINE_ITEMS['crafting']
+        : null);
     if (item) found[''] = item;
     return found;
   }

@@ -6,24 +6,34 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc --noEmit && vite build",
+    "build": "npm run typecheck && vite build",
     "preview": "vite preview",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "svelte-check --tsconfig ./tsconfig.json",
     "test": "vitest run",
     "test:watch": "vitest",
-    "check": "tsc --noEmit && vitest run"
+    "check": "npm run format:check && npm run typecheck && vitest run",
+    "format": "biome format --write .",
+    "format:check": "biome format ."
   },
   "engines": {
-    "node": ">=22"
+    "node": ">=26"
   },
   "devDependencies": {
+    "@biomejs/biome": "2.6.8",
+    "@sveltejs/vite-plugin-svelte": "^5.1.1",
+    "@tailwindcss/vite": "^4.3.5",
+    "@testing-library/svelte": "^5.4.2",
     "@types/node": "^26.6.6",
     "jsdom": "^31.0.1",
+    "svelte-check": "^4.7.8",
+    "tailwindcss": "^4.3.5",
     "typescript": "^5.7.2",
     "vite": "^6.0.7",
     "vitest": "^5.1.1"
   },
   "dependencies": {
-    "fzf": "^0.5.2"
+    "fzf": "^0.5.2",
+    "sv-router": "^0.19.0",
+    "svelte": "^5.59.1"
   }
 }

@@ -55,11 +55,7 @@ export function producersOf(index: RecipeIndex, item: ItemKey): Recipe[] {
  * Auto-expansion deliberately only follows your own recipes: the game has dozens of recipes
  * (and plenty of loops) per item, so an imported recipe is used only once you pick it.
  */
-export function resolveChoice(
-  project: Project,
-  index: RecipeIndex,
-  item: ItemKey,
-): Recipe | null {
+export function resolveChoice(project: Project, index: RecipeIndex, item: ItemKey): Recipe | null {
   const choice = project.choices[item];
   if (choice === 'raw') return null;
   if (choice && index.byId.has(choice)) return index.byId.get(choice)!;

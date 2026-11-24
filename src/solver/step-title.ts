@@ -76,11 +76,7 @@ export function mergeNames(a: string, b: string): string | null {
   const right = b.split(' ');
 
   let prefix = 0;
-  while (
-    prefix < left.length - 1 &&
-    prefix < right.length - 1 &&
-    left[prefix] === right[prefix]
-  ) {
+  while (prefix < left.length - 1 && prefix < right.length - 1 && left[prefix] === right[prefix]) {
     prefix++;
   }
 
